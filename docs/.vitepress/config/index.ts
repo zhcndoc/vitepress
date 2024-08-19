@@ -10,8 +10,8 @@ import { ko } from './ko'
 export default defineConfig({
   ...shared,
   locales: {
-    root: { label: 'English', ...en },
-    zh: { label: '简体中文', ...zh },
+    en: { label: 'English', ...en },
+    root: { label: '简体中文', ...zh },
     pt: { label: 'Português', ...pt },
     ru: { label: 'Русский', ...ru },
     es: { label: 'Español', ...es },

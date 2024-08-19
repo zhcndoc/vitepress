@@ -9,7 +9,7 @@ export const shared = defineConfig({
   title: 'VitePress',
 
   rewrites: {
-    'en/:rest*': ':rest*'
+    'zh/:rest*': ':rest*'
   },
 
   lastUpdated: true,
@@ -46,7 +46,7 @@ export const shared = defineConfig({
     ['meta', { property: 'og:site_name', content: 'VitePress' }],
     ['meta', { property: 'og:image', content: 'https://vitepress.dev/vitepress-og.jpg' }],
     ['meta', { property: 'og:url', content: 'https://vitepress.dev/' }],
-    ['script', { src: 'https://cdn.usefathom.com/script.js', 'data-site': 'AZBRSFGG', 'data-spa': 'auto', defer: '' }]
+    ['script', { defer: '', src: 'https://analytics.ikxin.com/script.js', 'data-website-id': 'f0e90b0d-e086-4fdc-b173-de4857b71900'}]
   ],
 
   themeConfig: {
@@ -72,6 +72,6 @@ export const shared = defineConfig({
       }
     },
 
-    carbonAds: { code: 'CEBDT27Y', placement: 'vuejsorg' }
+    // carbonAds: { code: 'CEBDT27Y', placement: 'vuejsorg' }
   }
 })
