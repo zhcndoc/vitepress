@@ -2,7 +2,7 @@
 layout: home
 
 title: VitePress 中文文档
-titleTemplate: 由 Vite 和 Vue 驱动的静态站点生成器
+titleTemplate: ':title - 由 Vite 和 Vue 驱动的静态站点生成器'
 
 hero:
   name: VitePress

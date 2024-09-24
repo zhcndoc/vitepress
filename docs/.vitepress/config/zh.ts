@@ -6,7 +6,8 @@ const pkg = require('vitepress/package.json')
 
 export const zh = defineConfig({
   title: 'VitePress 中文文档',
-  lang: 'zh-Hans',
+  titleTemplate: ':title - VitePress 中文文档',
+  lang: 'zh-CN',
   description: '由 Vite 和 Vue 驱动的静态站点生成器',
 
   themeConfig: {
