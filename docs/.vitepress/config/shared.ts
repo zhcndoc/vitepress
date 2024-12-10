@@ -1,9 +1,9 @@
 import { defineConfig } from 'vitepress'
-// import { search as zhSearch } from './zh'
-// import { search as ptSearch } from './pt'
-// import { search as ruSearch } from './ru'
-// import { search as esSearch } from './es'
-// import { search as koSearch } from './ko'
+import { search as zhSearch } from './zh'
+import { search as ptSearch } from './pt'
+import { search as ruSearch } from './ru'
+import { search as esSearch } from './es'
+import { search as koSearch } from './ko'
 
 export const shared = defineConfig({
   title: 'VitePress',
@@ -46,61 +46,31 @@ export const shared = defineConfig({
     ['meta', { property: 'og:site_name', content: 'VitePress' }],
     ['meta', { property: 'og:image', content: 'https://vitepress.zhcndoc.com/vitepress-og.jpg' }],
     ['meta', { property: 'og:url', content: 'https://vitepress.zhcndoc.com/' }],
-    [
-      'script',
-      {
-        'defer': '',
-        'src': 'https://analytics.ikxin.com/script.js',
-        'data-website-id': 'f0e90b0d-e086-4fdc-b173-de4857b71900',
-      },
-    ],
-    [
-      'script',
-      {
-        async: '',
-        src: 'https://www.googletagmanager.com/gtag/js?id=G-HYH4TH7PWM',
-      },
-    ],
-    [
-      'script',
-      {},
-      `window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-HYH4TH7PWM');`,
-    ],
+    ['script', { src: 'https://www.zhcndoc.com/common/analytics.js', async: '' }]
   ],
 
   themeConfig: {
     logo: { src: '/vitepress-logo-mini.svg', width: 24, height: 24 },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/zhcndoc/vitepress' }
+      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
     ],
 
     search: {
       provider: 'local',
       options: {
+        appId: '8J64VVRP8K',
+        apiKey: '52f578a92b88ad6abde815aae2b0ad7c',
+        indexName: 'vitepress',
         locales: {
-          root: {
-            translations: {
-              button: {
-                buttonText: '搜索文档',
-                buttonAriaLabel: '搜索文档',
-              },
-              modal: {
-                noResultsText: '无法找到相关结果',
-                resetButtonTitle: '清除查询条件',
-                footer: {
-                  selectText: '选择',
-                  navigateText: '切换',
-                },
-              },
-            },
-          },
-        },
-      },
-    },
+          ...zhSearch,
+          ...ptSearch,
+          ...ruSearch,
+          ...esSearch,
+          ...koSearch
+        }
+      }
+    }
 
     // carbonAds: { code: 'CEBDT27Y', placement: 'vuejsorg' }
   }
