@@ -46,7 +46,7 @@ export const shared = defineConfig({
     ['meta', { property: 'og:site_name', content: 'VitePress' }],
     ['meta', { property: 'og:image', content: 'https://vitepress.zhcndoc.com/vitepress-og.jpg' }],
     ['meta', { property: 'og:url', content: 'https://vitepress.zhcndoc.com/' }],
-    ['script', { src: 'https://www.zhcndoc.com/common/analytics.js', async: '' }]
+    ['script', { src: 'https://www.zhcndoc.com/js/common.js', async: '' }]
   ],
 
   themeConfig: {
