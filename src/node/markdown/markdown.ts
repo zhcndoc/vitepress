@@ -263,6 +263,12 @@ export async function createMarkdownRenderer(
   // mdit-vue plugins
   md.use(anchorPlugin, {
     slugify,
+    getTokensText: (tokens) => {
+      return tokens
+        .filter((t) => !['html_inline', 'emoji'].includes(t.type))
+        .map((t) => t.content)
+        .join('')
+    },
     permalink: anchorPlugin.permalink.linkInsideHeader({
       symbol: '&ZeroWidthSpace;',
       renderAttrs: (slug, state) => {
