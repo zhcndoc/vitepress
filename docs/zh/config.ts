@@ -5,9 +5,7 @@ const require = createRequire(import.meta.url)
 const pkg = require('vitepress/package.json')
 
 export default defineAdditionalConfig({
-  title: 'VitePress 中文文档',
-  titleTemplate: ':title - VitePress 中文文档',
-  lang: 'zh-CN',
+  lang: 'zh-Hans',
   description: '由 Vite 和 Vue 驱动的静态站点生成器',
 
   themeConfig: {
@@ -16,8 +14,8 @@ export default defineAdditionalConfig({
     search: { options: searchOptions() },
 
     sidebar: {
-      '/guide/': { base: '/guide/', items: sidebarGuide() },
-      '/reference/': { base: '/reference/', items: sidebarReference() }
+      '/zh/guide/': { base: '/zh/guide/', items: sidebarGuide() },
+      '/zh/reference/': { base: '/zh/reference/', items: sidebarReference() }
     },
 
     editLink: {
@@ -26,8 +24,8 @@ export default defineAdditionalConfig({
     },
 
     footer: {
-      message: `<a target="_blank" href="https://www.zhcndoc.com">简中文档</a>`,
-      copyright: '<a rel="nofollow" target="_blank" href="https://beian.miit.gov.cn">沪ICP备2024070610号-3</a>',
+      message: '基于 MIT 许可发布',
+      copyright: `版权所有 © 2019-${new Date().getFullYear()} 尤雨溪`
     },
 
     docFooter: {
@@ -65,13 +63,13 @@ function nav(): DefaultTheme.NavItem[] {
   return [
     {
       text: '指南',
-      link: '/guide/what-is-vitepress',
-      activeMatch: '/guide/'
+      link: '/zh/guide/what-is-vitepress',
+      activeMatch: '/zh/guide/'
     },
     {
       text: '参考',
-      link: '/reference/site-config',
-      activeMatch: '/reference/'
+      link: '/zh/reference/site-config',
+      activeMatch: '/zh/reference/'
     },
     {
       text: pkg.version,
@@ -131,7 +129,7 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
         { text: 'sitemap 生成', link: 'sitemap-generation' }
       ]
     },
-    { text: '配置和 API 参考', base: '/reference/', link: 'site-config' }
+    { text: '配置和 API 参考', base: '/zh/reference/', link: 'site-config' }
   ]
 }
 
@@ -146,7 +144,7 @@ function sidebarReference(): DefaultTheme.SidebarItem[] {
         { text: 'CLI', link: 'cli' },
         {
           text: '默认主题',
-          base: '/reference/default-theme-',
+          base: '/zh/reference/default-theme-',
           items: [
             { text: '概览', link: 'config' },
             { text: '导航栏', link: 'nav' },

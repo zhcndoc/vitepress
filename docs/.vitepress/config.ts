@@ -13,7 +13,8 @@ import llmstxt from 'vitepress-plugin-llms'
 const prod = !!process.env.NETLIFY
 
 export default defineConfig({
-  title: 'VitePress',
+  title: 'VitePress 中文文档',
+  titleTemplate: ':title - VitePress 中文文档',
 
   rewrites: {
     'zh/:rest*': ':rest*'
@@ -94,9 +95,9 @@ export default defineConfig({
     search: {
       provider: 'local',
       options: {
-        appId: '8J64VVRP8K',
-        apiKey: '52f578a92b88ad6abde815aae2b0ad7c',
-        indexName: 'vitepress'
+        // appId: '8J64VVRP8K',
+        // apiKey: '52f578a92b88ad6abde815aae2b0ad7c',
+        // indexName: 'vitepress'
       }
     }
 
@@ -104,13 +105,13 @@ export default defineConfig({
   },
 
   locales: {
-    root: { label: 'English' },
-    zh: { label: '简体中文' },
-    pt: { label: 'Português' },
-    ru: { label: 'Русский' },
-    es: { label: 'Español' },
-    ko: { label: '한국어' },
-    fa: { label: 'فارسی' }
+    en: { label: 'English', link: 'https://vitepress.dev' },
+    root: { label: '简体中文' }
+    // pt: { label: 'Português' },
+    // ru: { label: 'Русский' },
+    // es: { label: 'Español' },
+    // ko: { label: '한국어' },
+    // fa: { label: 'فارسی' }
   },
 
   vite: {
@@ -126,7 +127,7 @@ export default defineConfig({
       }),
       prod &&
         llmstxt({
-          workDir: 'en',
+          workDir: 'zh',
           ignoreFiles: ['index.md']
         })
     ]

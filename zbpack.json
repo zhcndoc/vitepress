@@ -1,7 +1,0 @@
-{
-  "app_dir": "/",
-  "install_command": "pnpm install",
-  "build_command": "pnpm docs:build && pnpm docs:lunaria:build",
-  "cache_dependencies": false,
-  "output_dir": "docs/.vitepress/dist"
-}
