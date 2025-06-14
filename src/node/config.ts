@@ -34,6 +34,7 @@ const debug = _debug('vitepress:config')
 const resolve = (root: string, file: string) =>
   normalizePath(path.resolve(root, `.vitepress`, file))
 
+export type { ConfigEnv }
 export type UserConfigFn<ThemeConfig> = (
   env: ConfigEnv
 ) => Awaitable<UserConfig<ThemeConfig>>
@@ -343,6 +344,7 @@ export async function resolveSiteData(
 
 function resolveSiteDataHead(userConfig?: UserConfig): HeadConfig[] {
   const head = userConfig?.head ?? []
+  if (userConfig?.mpa) return head
 
   // add inline script to apply dark mode, if user enables the feature.
   // this is required to prevent "flash" on initial page load.

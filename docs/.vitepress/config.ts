@@ -73,15 +73,35 @@ export default defineConfig({
     }
   },
 
-  /* prettier-ignore */
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/vitepress-logo-mini.svg' }],
-    ['link', { rel: 'icon', type: 'image/png', href: '/vitepress-logo-mini.png' }],
+    [
+      'link',
+      { rel: 'icon', type: 'image/svg+xml', href: '/vitepress-logo-mini.svg' }
+    ],
+    [
+      'link',
+      { rel: 'icon', type: 'image/png', href: '/vitepress-logo-mini.png' }
+    ],
     ['meta', { name: 'theme-color', content: '#5f67ee' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:site_name', content: 'VitePress' }],
-    ['meta', { property: 'og:image', content: 'https://vitepress.zhcndoc.com/vitepress-og.jpg' }],
+    ['meta', { property: 'og:site_name', content: 'VitePress 中文文档' }],
+    [
+      'meta',
+      {
+        property: 'og:image',
+        content: 'https://vitepress.zhcndoc.com/vitepress-og.jpg'
+      }
+    ],
     ['meta', { property: 'og:url', content: 'https://vitepress.zhcndoc.com/' }],
+    // [
+    //   'script',
+    //   {
+    //     src: 'https://cdn.usefathom.com/script.js',
+    //     'data-site': 'AZBRSFGG',
+    //     'data-spa': 'auto',
+    //     defer: ''
+    //   }
+    // ]
     ['script', { src: 'https://www.zhcndoc.com/js/common.js', async: '' }]
   ],
 
@@ -130,7 +150,10 @@ export default defineConfig({
           workDir: 'zh',
           ignoreFiles: ['index.md']
         })
-    ]
+    ],
+    experimental: {
+      enableNativePlugin: true
+    }
   },
 
   transformPageData: prod
