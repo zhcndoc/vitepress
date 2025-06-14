@@ -1,0 +1,1 @@
+var e=`/appearance-toggle-transition.webp`;export{e as appearance_toggle_transition_default};

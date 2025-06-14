@@ -1,0 +1,1 @@
+var e=`/search.png`;export{e as search_default};
