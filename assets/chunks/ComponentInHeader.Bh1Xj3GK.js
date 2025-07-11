@@ -1,0 +1,1 @@
+import{__plugin_vue_export_helper_default as e,createElementBlock as t,openBlock as n}from"./plugin-vue_export-helper.CqSK7I0E.js";const r={};function i(e,r){return n(),t(`span`,null,`⚡`)}var a=e(r,[[`render`,i]]);export{a as ComponentInHeader_default};
