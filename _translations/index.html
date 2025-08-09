@@ -1,0 +1,2330 @@
+
+		<!doctype html>
+		<html dir="ltr" lang="en">
+			<head>
+				<!-- Built-in/custom meta tags -->
+				
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+	<title>Localization Status</title>
+	<meta name="description" content="Online localization status dashboard of the project " />
+	
+	<meta property="og:title" content="Localization Status" />
+	<meta property="og:type" content="website" />
+	
+	<meta property="og:description" content="Online localization status dashboard of the project " />
+	 
+
+				<!-- Additional head tags -->
+				
+				<!-- Built-in styles -->
+				
+	<style>
+		:root {
+			/** Fonts */
+			--ln-font-fallback: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+				Apple Color Emoji, Segoe UI Emoji;
+			--ln-font-body: system-ui, var(--ln-font-fallback);
+			--ln-font-mono: 'IBM Plex Mono', Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console',
+				'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono',
+				'Nimbus Mono L', Monaco, 'Courier New', Courier, monospace;
+
+			/* Light theme colors */
+			--ln-color-white: #f9fafb;
+			--ln-color-gray-1: #f3f4f6;
+			--ln-color-gray-2: #e5e7eb;
+			--ln-color-gray-3: #d1d5db;
+			--ln-color-gray-4: #9ca3af;
+			--ln-color-gray-5: #6b7280;
+			--ln-color-gray-6: #4b5563;
+			--ln-color-gray-7: #374151;
+			--ln-color-black: #030712;
+			--ln-color-blue: #3b82f6;
+			--ln-color-orange: #f97316;
+			--ln-color-purple: #a855f7;
+
+			/** Contextual colors */
+			--ln-color-background: var(--ln-color-white);
+			--ln-color-link: var(--ln-color-blue);
+			--ln-color-done: var(--ln-color-purple);
+			--ln-color-outdated: var(--ln-color-orange);
+			--ln-color-missing: var(--ln-color-black);
+			--ln-color-table-border: var(--ln-color-gray-3);
+			--ln-color-table-background: var(--ln-color-gray-1);
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root {
+				/* Dark theme colors */
+				--ln-color-white: #030712;
+				--ln-color-gray-1: #374151;
+				--ln-color-gray-2: #4b5563;
+				--ln-color-gray-3: #6b7280;
+				--ln-color-gray-4: #9ca3af;
+				--ln-color-gray-5: #d1d5db;
+				--ln-color-gray-6: #e5e7eb;
+				--ln-color-gray-7: #f3f4f6;
+				--ln-color-black: #f9fafb;
+				--ln-color-blue: #60a5fa;
+				--ln-color-orange: #fb923c;
+				--ln-color-purple: #c084fc;
+			}
+		}
+
+		* {
+			box-sizing: border-box;
+			margin: 0;
+		}
+
+		html {
+			background: var(--ln-color-background);
+			scrollbar-gutter: stable;
+		}
+
+		body {
+			color: var(--ln-color-black);
+			display: flex;
+			flex-direction: column;
+			font-family: var(--ln-font-body);
+			font-size: 16px;
+			line-height: 1.5;
+			margin-block: 2rem;
+			margin-inline: 1rem;
+		}
+
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			margin-bottom: 1rem;
+			font-weight: bold;
+			line-height: 1.3;
+		}
+
+		h1,
+		h2 {
+			max-width: 40ch;
+		}
+
+		h1 {
+			font-size: 2.25rem;
+			font-weight: 900;
+		}
+
+		h2 {
+			font-size: 1.875rem;
+			margin-top: 4rem;
+		}
+
+		h3,
+		h4 {
+			margin-top: 3rem;
+		}
+
+		h5,
+		h6 {
+			margin-top: 2rem;
+		}
+
+		main {
+			max-width: 80ch;
+			margin-inline: auto;
+		}
+
+		.limit-to-viewport {
+			max-width: calc(100vw - 2rem);
+		}
+
+		p + p {
+			margin-top: 1.25rem;
+		}
+
+		a {
+			color: var(--ln-color-link);
+			text-decoration: none;
+		}
+
+		h2 a {
+			color: inherit;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+
+		ul {
+			font-size: 0.875rem;
+		}
+
+		.progress-details {
+			margin-bottom: 1.25rem;
+		}
+
+		details summary {
+			cursor: pointer;
+			user-select: none;
+		}
+
+		details summary:hover strong,
+		details summary:hover::marker {
+			color: var(--ln-color-gray-5);
+		}
+
+		details p {
+			margin-top: 1.2rem;
+		}
+
+		details h3 {
+			margin-top: 1.2rem;
+			font-size: 0.8rem;
+		}
+
+		details h4 {
+			margin-top: 1rem;
+			font-size: 0.8rem;
+		}
+
+		details > :last-child {
+			margin-bottom: 1rem;
+		}
+
+		.create-button {
+			padding: 0.1em 0.5em;
+			font-weight: bold;
+			font-size: 0.75rem;
+		}
+
+		.status-by-file {
+			margin-bottom: 1rem;
+			border-collapse: collapse;
+			border: 1px solid var(--ln-color-table-border);
+			font-size: 0.8125rem;
+			column-gap: 64px;
+		}
+
+		.status-by-file tr:first-of-type td {
+			padding-top: 0.5rem;
+		}
+
+		.status-by-file tr:last-of-type td {
+			padding-bottom: 0.5rem;
+		}
+
+		.status-by-file tr td:first-of-type {
+			padding-inline: 1rem;
+		}
+
+		.status-by-file th {
+			border-bottom: 1px solid var(--ln-color-table-border);
+			background: var(--ln-color-table-background);
+			position: sticky;
+			top: -1px;
+			white-space: nowrap;
+			padding-inline: 0.3rem;
+		}
+
+		.status-by-file th,
+		.status-by-file td {
+			padding-block: 0.2rem;
+		}
+
+		.status-by-file tbody tr:hover td {
+			background: var(--ln-color-table-background);
+		}
+
+		.status-by-file th:first-of-type,
+		.status-by-file td:first-of-type {
+			text-align: left;
+			padding-inline-start: 1rem;
+		}
+
+		.status-by-file th:last-of-type,
+		.status-by-file td:last-of-type {
+			text-align: center;
+			padding-inline-end: 1rem;
+		}
+
+		.status-by-file td:not(:first-of-type) {
+			min-width: 2rem;
+			text-align: center;
+			cursor: default;
+		}
+
+		.status-by-file td:not(:first-of-type) a {
+			text-decoration: none;
+		}
+
+		.progress-summary {
+			font-size: 0.8125rem;
+		}
+
+		.progress-bar {
+			display: flex;
+			flex-direction: row;
+			margin-top: 0.5rem;
+		}
+
+		.progress-bar div:first-of-type {
+			border-radius: 36px 0px 0px 36px;
+		}
+
+		.progress-bar div:last-of-type {
+			border-radius: 0px 36px 36px 0px;
+		}
+
+		.done-bar,
+		.outdated-bar,
+		.missing-bar {
+			width: 1rem;
+			height: 1rem;
+		}
+
+		.done-bar {
+			background-color: var(--ln-color-done);
+		}
+
+		.outdated-bar {
+			background-color: var(--ln-color-outdated);
+		}
+
+		.missing-bar {
+			background-color: var(--ln-color-missing);
+		}
+
+		.capitalize {
+			text-transform: capitalize;
+		}
+	</style>
+
+				<!-- Custom styles -->
+				
+			</head>
+			<body>
+				<!-- Built-in/custom body content -->
+				
+		<main>
+			<div class="limit-to-viewport">
+				
+				<h1>Localization Status</h1>
+				
+				
+		<h2 id="by-locale">
+			<a href="#by-locale">Localization progress by locale</a>
+		</h2>
+		
+		<details class="progress-details">
+			<summary>
+				<strong
+					>简体中文 (zh)</strong
+				>
+				<br />
+				<span class="progress-summary"
+					>31 done, 6 outdated, 0 missing</span
+				>
+				<br />
+				
+		<div class="progress-bar" aria-hidden="true">
+			<div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div> <div class="outdated-bar"></div><div class="outdated-bar"></div><div class="outdated-bar"></div>
+			
+		</div>
+	
+			</summary>
+			
+		<h3 class="capitalize">outdated</h3>
+		<ul>
+			
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/markdown.md">guide/markdown.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/markdown.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/guide/markdown.md?since=2025-02-04T09:07:48.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/routing.md">guide/routing.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/routing.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/guide/routing.md?since=2024-01-24T07:42:18.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/using-vue.md">guide/using-vue.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/using-vue.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/guide/using-vue.md?since=2024-06-26T16:29:01.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-config.md">reference/default-theme-config.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-config.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/default-theme-config.md?since=2024-11-04T15:32:31.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-last-updated.md">reference/default-theme-last-updated.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-last-updated.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/default-theme-last-updated.md?since=2024-01-09T04:04:34.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/frontmatter-config.md">reference/frontmatter-config.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/frontmatter-config.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/frontmatter-config.md?since=2024-01-09T04:04:34.000Z">source change history</a>)
+	 
+					</li>
+				
+		</ul>
+	
+			
+			
+		</details>
+	
+		<details class="progress-details">
+			<summary>
+				<strong
+					>Português (pt)</strong
+				>
+				<br />
+				<span class="progress-summary"
+					>26 done, 9 outdated, 2 missing</span
+				>
+				<br />
+				
+		<div class="progress-bar" aria-hidden="true">
+			<div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div> <div class="outdated-bar"></div><div class="outdated-bar"></div><div class="outdated-bar"></div><div class="outdated-bar"></div><div class="outdated-bar"></div>
+			<div class="missing-bar"></div>
+		</div>
+	
+			</summary>
+			
+		<h3 class="capitalize">outdated</h3>
+		<ul>
+			
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/markdown.md">guide/markdown.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/markdown.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/guide/markdown.md?since=2025-02-04T09:07:48.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/routing.md">guide/routing.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/routing.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/guide/routing.md?since=2024-03-07T07:30:37.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/sitemap-generation.md">guide/sitemap-generation.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/sitemap-generation.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/guide/sitemap-generation.md?since=2024-03-07T07:30:37.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/using-vue.md">guide/using-vue.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/using-vue.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/guide/using-vue.md?since=2024-06-26T16:29:01.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/index.md">index.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/index.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/index.md?since=2025-04-15T17:13:24.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-config.md">reference/default-theme-config.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-config.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/default-theme-config.md?since=2024-11-04T15:32:31.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-last-updated.md">reference/default-theme-last-updated.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-last-updated.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/default-theme-last-updated.md?since=2024-03-07T07:30:37.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-nav.md">reference/default-theme-nav.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-nav.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/default-theme-nav.md?since=2024-03-07T07:30:37.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/frontmatter-config.md">reference/frontmatter-config.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/frontmatter-config.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/frontmatter-config.md?since=2024-03-07T07:30:37.000Z">source change history</a>)
+	 
+					</li>
+				
+		</ul>
+	
+			<h3 class="capitalize">missing</h3>
+						<ul>
+							
+									<li>
+										<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/migration-from-vitepress-0.md">guide/migration-from-vitepress-0.md</a>
+										<a class="create-button" href="https://github.com/vuejs/vitepress/new/main?filename=docs/pt/guide/migration-from-vitepress-0.md">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/migration-from-vuepress.md">guide/migration-from-vuepress.md</a>
+										<a class="create-button" href="https://github.com/vuejs/vitepress/new/main?filename=docs/pt/guide/migration-from-vuepress.md">Create file</a>
+									</li>
+								
+						</ul>
+			
+		</details>
+	
+		<details class="progress-details">
+			<summary>
+				<strong
+					>Русский (ru)</strong
+				>
+				<br />
+				<span class="progress-summary"
+					>36 done, 1 outdated, 0 missing</span
+				>
+				<br />
+				
+		<div class="progress-bar" aria-hidden="true">
+			<div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div> <div class="outdated-bar"></div>
+			
+		</div>
+	
+			</summary>
+			
+		<h3 class="capitalize">outdated</h3>
+		<ul>
+			
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/index.md">index.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/index.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/index.md?since=2025-04-15T17:13:24.000Z">source change history</a>)
+	 
+					</li>
+				
+		</ul>
+	
+			
+			
+		</details>
+	
+		<details class="progress-details">
+			<summary>
+				<strong
+					>Español (es)</strong
+				>
+				<br />
+				<span class="progress-summary"
+					>28 done, 7 outdated, 2 missing</span
+				>
+				<br />
+				
+		<div class="progress-bar" aria-hidden="true">
+			<div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div> <div class="outdated-bar"></div><div class="outdated-bar"></div><div class="outdated-bar"></div><div class="outdated-bar"></div>
+			<div class="missing-bar"></div>
+		</div>
+	
+			</summary>
+			
+		<h3 class="capitalize">outdated</h3>
+		<ul>
+			
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/markdown.md">guide/markdown.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/markdown.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/guide/markdown.md?since=2025-02-04T09:07:48.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/routing.md">guide/routing.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/routing.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/guide/routing.md?since=2024-06-06T05:06:00.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/index.md">index.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/index.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/index.md?since=2025-04-15T17:13:24.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-config.md">reference/default-theme-config.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-config.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/default-theme-config.md?since=2024-11-04T15:32:31.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-last-updated.md">reference/default-theme-last-updated.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-last-updated.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/default-theme-last-updated.md?since=2024-06-11T12:14:11.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-nav.md">reference/default-theme-nav.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-nav.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/default-theme-nav.md?since=2024-06-11T12:14:11.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/frontmatter-config.md">reference/frontmatter-config.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/frontmatter-config.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/frontmatter-config.md?since=2024-06-11T12:14:11.000Z">source change history</a>)
+	 
+					</li>
+				
+		</ul>
+	
+			<h3 class="capitalize">missing</h3>
+						<ul>
+							
+									<li>
+										<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/migration-from-vitepress-0.md">guide/migration-from-vitepress-0.md</a>
+										<a class="create-button" href="https://github.com/vuejs/vitepress/new/main?filename=docs/es/guide/migration-from-vitepress-0.md">Create file</a>
+									</li>
+								
+									<li>
+										<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/migration-from-vuepress.md">guide/migration-from-vuepress.md</a>
+										<a class="create-button" href="https://github.com/vuejs/vitepress/new/main?filename=docs/es/guide/migration-from-vuepress.md">Create file</a>
+									</li>
+								
+						</ul>
+			
+		</details>
+	
+		<details class="progress-details">
+			<summary>
+				<strong
+					>한국어 (ko)</strong
+				>
+				<br />
+				<span class="progress-summary"
+					>30 done, 7 outdated, 0 missing</span
+				>
+				<br />
+				
+		<div class="progress-bar" aria-hidden="true">
+			<div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div> <div class="outdated-bar"></div><div class="outdated-bar"></div><div class="outdated-bar"></div><div class="outdated-bar"></div>
+			
+		</div>
+	
+			</summary>
+			
+		<h3 class="capitalize">outdated</h3>
+		<ul>
+			
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/markdown.md">guide/markdown.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/markdown.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/guide/markdown.md?since=2025-02-04T09:07:48.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/routing.md">guide/routing.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/routing.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/guide/routing.md?since=2024-08-07T12:30:45.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/using-vue.md">guide/using-vue.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/using-vue.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/guide/using-vue.md?since=2024-08-07T12:30:45.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/index.md">index.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/index.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/index.md?since=2025-04-15T17:13:24.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-config.md">reference/default-theme-config.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-config.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/default-theme-config.md?since=2024-11-04T15:32:31.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-last-updated.md">reference/default-theme-last-updated.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-last-updated.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/default-theme-last-updated.md?since=2024-08-09T10:48:09.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/frontmatter-config.md">reference/frontmatter-config.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/frontmatter-config.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/frontmatter-config.md?since=2024-08-09T10:48:09.000Z">source change history</a>)
+	 
+					</li>
+				
+		</ul>
+	
+			
+			
+		</details>
+	
+		<details class="progress-details">
+			<summary>
+				<strong
+					>فارسی (fa)</strong
+				>
+				<br />
+				<span class="progress-summary"
+					>32 done, 5 outdated, 0 missing</span
+				>
+				<br />
+				
+		<div class="progress-bar" aria-hidden="true">
+			<div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div><div class="done-bar"></div> <div class="outdated-bar"></div><div class="outdated-bar"></div><div class="outdated-bar"></div>
+			
+		</div>
+	
+			</summary>
+			
+		<h3 class="capitalize">outdated</h3>
+		<ul>
+			
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/markdown.md">guide/markdown.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/markdown.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/guide/markdown.md?since=2025-02-04T09:07:48.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/index.md">index.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/index.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/index.md?since=2025-04-15T17:13:24.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-config.md">reference/default-theme-config.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-config.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/default-theme-config.md?since=2024-12-13T11:05:48.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-last-updated.md">reference/default-theme-last-updated.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-last-updated.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/default-theme-last-updated.md?since=2024-12-13T11:05:48.000Z">source change history</a>)
+	 
+					</li>
+				
+					<li>
+						 
+		<a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/frontmatter-config.md">reference/frontmatter-config.md</a>
+		(<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/frontmatter-config.md">outdated localization</a>,
+				  <a href="https://github.com/vuejs/vitepress/commits/main/docs/en/reference/frontmatter-config.md?since=2024-12-13T11:05:48.000Z">source change history</a>)
+	 
+					</li>
+				
+		</ul>
+	
+			
+			
+		</details>
+	
+	
+				
+			</div>
+			
+		<h2 id="by-file">
+			<a href="#by-file">Localization status by file</a>
+		</h2>
+		<table class="status-by-file">
+			<thead>
+				<tr>
+					<th>File</th><th>zh</th><th>pt</th><th>ru</th><th>es</th><th>ko</th><th>fa</th>
+				</tr>
+			</thead>
+			
+		<tbody>
+			
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/config.ts">config.ts</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/config.ts" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/config.ts" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/config.ts" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/config.ts" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/config.ts" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/config.ts" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/asset-handling.md">guide/asset-handling.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/asset-handling.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/asset-handling.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/asset-handling.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/asset-handling.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/asset-handling.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/asset-handling.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/cms.md">guide/cms.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/cms.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/cms.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/cms.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/cms.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/cms.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/cms.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/custom-theme.md">guide/custom-theme.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/custom-theme.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/custom-theme.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/custom-theme.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/custom-theme.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/custom-theme.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/custom-theme.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/data-loading.md">guide/data-loading.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/data-loading.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/data-loading.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/data-loading.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/data-loading.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/data-loading.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/data-loading.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/deploy.md">guide/deploy.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/deploy.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/deploy.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/deploy.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/deploy.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/deploy.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/deploy.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/extending-default-theme.md">guide/extending-default-theme.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/extending-default-theme.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/extending-default-theme.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/extending-default-theme.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/extending-default-theme.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/extending-default-theme.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/extending-default-theme.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/frontmatter.md">guide/frontmatter.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/frontmatter.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/frontmatter.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/frontmatter.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/frontmatter.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/frontmatter.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/frontmatter.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/getting-started.md">guide/getting-started.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/getting-started.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/getting-started.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/getting-started.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/getting-started.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/getting-started.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/getting-started.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/i18n.md">guide/i18n.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/i18n.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/i18n.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/i18n.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/i18n.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/i18n.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/i18n.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/markdown.md">guide/markdown.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/markdown.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/markdown.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/markdown.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/markdown.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/markdown.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/markdown.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/migration-from-vitepress-0.md">guide/migration-from-vitepress-0.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/migration-from-vitepress-0.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/new/main?filename=docs/pt/guide/migration-from-vitepress-0.md" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/migration-from-vitepress-0.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/new/main?filename=docs/es/guide/migration-from-vitepress-0.md" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/migration-from-vitepress-0.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/migration-from-vitepress-0.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/migration-from-vuepress.md">guide/migration-from-vuepress.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/migration-from-vuepress.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/new/main?filename=docs/pt/guide/migration-from-vuepress.md" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/migration-from-vuepress.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/new/main?filename=docs/es/guide/migration-from-vuepress.md" title="missing">
+				<span aria-hidden="true">❌</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/migration-from-vuepress.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/migration-from-vuepress.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/mpa-mode.md">guide/mpa-mode.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/mpa-mode.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/mpa-mode.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/mpa-mode.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/mpa-mode.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/mpa-mode.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/mpa-mode.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/routing.md">guide/routing.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/routing.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/routing.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/routing.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/routing.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/routing.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/routing.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/sitemap-generation.md">guide/sitemap-generation.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/sitemap-generation.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/sitemap-generation.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/sitemap-generation.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/sitemap-generation.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/sitemap-generation.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/sitemap-generation.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/ssr-compat.md">guide/ssr-compat.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/ssr-compat.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/ssr-compat.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/ssr-compat.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/ssr-compat.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/ssr-compat.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/ssr-compat.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/using-vue.md">guide/using-vue.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/using-vue.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/using-vue.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/using-vue.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/using-vue.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/using-vue.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/using-vue.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/guide/what-is-vitepress.md">guide/what-is-vitepress.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/guide/what-is-vitepress.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/guide/what-is-vitepress.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/guide/what-is-vitepress.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/guide/what-is-vitepress.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/guide/what-is-vitepress.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/guide/what-is-vitepress.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/index.md">index.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/index.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/index.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/index.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/index.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/index.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/index.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/cli.md">reference/cli.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/cli.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/cli.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/cli.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/cli.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/cli.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/cli.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-badge.md">reference/default-theme-badge.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-badge.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-badge.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/default-theme-badge.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-badge.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-badge.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-badge.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-carbon-ads.md">reference/default-theme-carbon-ads.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-carbon-ads.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-carbon-ads.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/default-theme-carbon-ads.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-carbon-ads.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-carbon-ads.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-carbon-ads.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-config.md">reference/default-theme-config.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-config.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-config.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/default-theme-config.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-config.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-config.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-config.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-edit-link.md">reference/default-theme-edit-link.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-edit-link.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-edit-link.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/default-theme-edit-link.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-edit-link.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-edit-link.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-edit-link.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-footer.md">reference/default-theme-footer.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-footer.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-footer.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/default-theme-footer.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-footer.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-footer.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-footer.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-home-page.md">reference/default-theme-home-page.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-home-page.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-home-page.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/default-theme-home-page.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-home-page.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-home-page.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-home-page.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-last-updated.md">reference/default-theme-last-updated.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-last-updated.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-last-updated.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/default-theme-last-updated.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-last-updated.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-last-updated.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-last-updated.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-layout.md">reference/default-theme-layout.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-layout.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-layout.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/default-theme-layout.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-layout.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-layout.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-layout.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-nav.md">reference/default-theme-nav.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-nav.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-nav.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/default-theme-nav.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-nav.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-nav.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-nav.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-prev-next-links.md">reference/default-theme-prev-next-links.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-prev-next-links.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-prev-next-links.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/default-theme-prev-next-links.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-prev-next-links.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-prev-next-links.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-prev-next-links.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-search.md">reference/default-theme-search.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-search.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-search.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/default-theme-search.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-search.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-search.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-search.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-sidebar.md">reference/default-theme-sidebar.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-sidebar.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-sidebar.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/default-theme-sidebar.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-sidebar.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-sidebar.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-sidebar.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/default-theme-team-page.md">reference/default-theme-team-page.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/default-theme-team-page.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/default-theme-team-page.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/default-theme-team-page.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/default-theme-team-page.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/default-theme-team-page.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/default-theme-team-page.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/frontmatter-config.md">reference/frontmatter-config.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/frontmatter-config.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/frontmatter-config.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/frontmatter-config.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/frontmatter-config.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/frontmatter-config.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/frontmatter-config.md" title="outdated">
+				<span aria-hidden="true">🔄</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/runtime-api.md">reference/runtime-api.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/runtime-api.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/runtime-api.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/runtime-api.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/runtime-api.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/runtime-api.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/runtime-api.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+				<tr>
+					<td><a href="https://github.com/vuejs/vitepress/blob/main/docs/en/reference/site-config.md">reference/site-config.md</a></td>
+						
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/zh/reference/site-config.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/pt/reference/site-config.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ru/reference/site-config.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/es/reference/site-config.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/ko/reference/site-config.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+		<td>
+			<a href="https://github.com/vuejs/vitepress/blob/main/docs/fa/reference/site-config.md" title="done">
+				<span aria-hidden="true">✔</span>
+		  </a>
+		</td>
+	
+					</td>
+				</tr>
+		</tbody>
+	
+		</table>
+		<sup class="capitalize"
+			>❌ missing &nbsp; 🔄 outdated &nbsp; ✔ done
+		</sup>
+	
+			
+		</main>
+	
+			</body>
+		</html>
+	

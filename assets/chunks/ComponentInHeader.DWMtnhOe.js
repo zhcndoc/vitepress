@@ -1,0 +1,1 @@
+import{D as e,b as t,l as n}from"./plugin-vue_export-helper.CIjrRlTa.js";const r={};function i(t,r){return e(),n(`span`,null,`⚡`)}var a=t(r,[[`render`,i]]);export{a as b};
