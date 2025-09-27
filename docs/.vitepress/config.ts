@@ -126,13 +126,18 @@ export default defineConfig({
   },
 
   locales: {
-    en: { label: 'English', link: 'https://vitepress.dev' },
-    root: { label: '简体中文' }
-    // pt: { label: 'Português' },
-    // ru: { label: 'Русский' },
-    // es: { label: 'Español' },
-    // ko: { label: '한국어' },
-    // fa: { label: 'فارسی' }
+    en: {
+      label: 'English',
+      link: 'https://vitepress.dev',
+      lang: 'en-US',
+      dir: 'ltr'
+    },
+    root: { label: '简体中文', lang: 'zh-Hans', dir: 'ltr' }
+    // pt: { label: 'Português', lang: 'pt-BR', dir: 'ltr' },
+    // ru: { label: 'Русский', lang: 'ru-RU', dir: 'ltr' },
+    // es: { label: 'Español', lang: 'es', dir: 'ltr' },
+    // ko: { label: '한국어', lang: 'ko-KR', dir: 'ltr' },
+    // fa: { label: 'فارسی', lang: 'fa-IR', dir: 'rtl' }
   },
 
   vite: {
