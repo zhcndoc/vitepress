@@ -1,0 +1,5 @@
+{
+  "app_dir": "/",
+  "build_command": "pnpm docs:build && pnpm docs:lunaria:build",
+  "output_dir": "docs/.vitepress/dist"
+}
