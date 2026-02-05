@@ -1,0 +1,1 @@
+import{d as e,k as t,t as n}from"./plugin-vue_export-helper.DILd4ls9.js";var r={};function i(n,r){return t(),e(`span`,null,`⚡`)}var a=n(r,[[`render`,i]]);export{a as t};
