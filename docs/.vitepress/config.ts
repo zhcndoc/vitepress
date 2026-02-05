@@ -27,10 +27,13 @@ export default defineConfig({
   markdown: {
     math: true,
     codeTransformers: [
-      // We use `[!!code` in demo to prevent transformation, here we revert it back.
+      // We use `[!!code` and `@@include` in demo to prevent transformation,
+      // here we revert it back.
       {
         postprocess(code) {
-          return code.replace(/\[\!\!code/g, '[!code')
+          return code
+            .replaceAll('[!!code', '[!code')
+            .replaceAll('@@include', '@include')
         }
       }
     ],
@@ -120,7 +123,10 @@ export default defineConfig({
         // appId: '8J64VVRP8K',
         // apiKey: '52f578a92b88ad6abde815aae2b0ad7c',
         // indexName: 'vitepress',
-        // askAi: 'YaVSonfX5bS8'
+        // askAi: {
+        //   assistantId: 'YaVSonfX5bS8',
+        //   sidePanel: true
+        // }
       }
     }
 
