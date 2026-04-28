@@ -1,4 +1,5 @@
 ---
+description: Despliega tu sitio VitePress en plataformas populares como Netlify, Vercel, GitHub Pages y más.
 outline: deep
 ---
 
@@ -205,7 +206,7 @@ No active opciones como _Auto Minify_ para código HTML. Eso removera comentario
 2. Cree un archivo llamado `.gitlab-ci.yml` en la raiz del proyecto con el contenido abajo. Esto construirá e implantará su sitio siempre que haga alteraciones en el contenido.
 
    ```yaml [.gitlab-ci.yml]
-   image: node:18
+   image: node:24
    pages:
      cache:
        paths:

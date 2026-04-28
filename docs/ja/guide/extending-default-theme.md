@@ -1,5 +1,6 @@
 ---
 outline: deep
+description: VitePressデフォルトテーマをカスタムCSS、コンポーネント、レイアウト、スロットで拡張・カスタマイズする方法。
 ---
 
 # デフォルトテーマの拡張 {#extending-the-default-theme}
@@ -192,6 +193,7 @@ export default {
   - `home-hero-info-before`
   - `home-hero-info`
   - `home-hero-info-after`
+  - `home-hero-actions-before-actions`
   - `home-hero-actions-after`
   - `home-hero-image`
   - `home-hero-after`

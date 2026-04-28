@@ -1,5 +1,6 @@
 ---
 outline: deep
+description: استقرار سایت ویت‌پرس خود بر روی پلتفرم‌های محبوب مانند Netlify، Vercel، GitHub Pages و سایر سرویس‌ها.
 ---
 
 # استقرار وب‌سایت ویت‌پرس شما {#deploy-your-vitepress-site}
@@ -203,7 +204,7 @@ Cache-Control: max-age=31536000,immutable
 2. یک فایل به نام `.gitlab-ci.yml` در ریشه پروژه خود با محتوای زیر ایجاد کنید. این کار به ساخت و انتشار وب‌سایت شما هر زمانی که تغییری در محتوا ایجاد می‌کنید، می‌پردازد:
 
    ```yaml [.gitlab-ci.yml]
-   image: node:18
+   image: node:24
    pages:
      cache:
        paths:
