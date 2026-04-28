@@ -11,7 +11,7 @@ import {
 import llmstxt from 'vitepress-plugin-llms'
 
 const prod = !!process.env.NETLIFY
-const siteUrl = 'https://vitepress.dev'
+const siteUrl = 'https://vitepress.zhcndoc.com'
 
 const ogImage = new URL('/vitepress-og.jpg', siteUrl).href
 
@@ -108,30 +108,30 @@ export default defineConfig({
     ],
 
     search: {
-      provider: 'algolia',
-      options: {
-        appId: '8J64VVRP8K',
-        apiKey: '52f578a92b88ad6abde815aae2b0ad7c',
-        indexName: 'vitepress',
-        askAi: {
-          assistantId: 'YaVSonfX5bS8',
-          sidePanel: true
-        }
-      }
-    },
+      provider: 'local'
+      // options: {
+      //   appId: '8J64VVRP8K',
+      //   apiKey: '52f578a92b88ad6abde815aae2b0ad7c',
+      //   indexName: 'vitepress',
+      //   askAi: {
+      //     assistantId: 'YaVSonfX5bS8',
+      //     sidePanel: true
+      //   }
+      // }
+    }
 
-    carbonAds: { code: 'CEBDT27Y', placement: 'vuejsorg' }
+    // carbonAds: { code: 'CEBDT27Y', placement: 'vuejsorg' }
   },
 
   locales: {
-    root: { label: 'English', lang: 'en-US', dir: 'ltr' },
-    zh: { label: '简体中文', lang: 'zh-Hans', dir: 'ltr' },
-    pt: { label: 'Português', lang: 'pt-BR', dir: 'ltr' },
-    ru: { label: 'Русский', lang: 'ru-RU', dir: 'ltr' },
-    es: { label: 'Español', lang: 'es', dir: 'ltr' },
-    ko: { label: '한국어', lang: 'ko-KR', dir: 'ltr' },
-    fa: { label: 'فارسی', lang: 'fa-IR', dir: 'rtl' },
-    ja: { label: '日本語', lang: 'ja', dir: 'ltr' }
+    root: { label: '简体中文', lang: 'zh-CN', dir: 'ltr' }
+    // zh: { label: '简体中文', lang: 'zh-Hans', dir: 'ltr' },
+    // pt: { label: 'Português', lang: 'pt-BR', dir: 'ltr' },
+    // ru: { label: 'Русский', lang: 'ru-RU', dir: 'ltr' },
+    // es: { label: 'Español', lang: 'es', dir: 'ltr' },
+    // ko: { label: '한국어', lang: 'ko-KR', dir: 'ltr' },
+    // fa: { label: 'فارسی', lang: 'fa-IR', dir: 'rtl' },
+    // ja: { label: '日本語', lang: 'ja', dir: 'ltr' }
   },
 
   vite: {

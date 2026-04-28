@@ -22,8 +22,8 @@ export default defineAdditionalConfig({
     },
 
     footer: {
-      message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2019-present Evan You'
+      message: `<a style="text-decoration: none;" target="_blank" href="https://www.zhcndoc.com">简中文档</a> | <a style="text-decoration: none;" rel="nofollow" target="_blank" href="https://beian.miit.gov.cn">沪ICP备2024070610号-3</a>`,
+      copyright: 'Copyright © 2019-present Evan You. Released under the MIT License.'
     }
   }
 })
@@ -31,12 +31,17 @@ export default defineAdditionalConfig({
 function nav(): DefaultTheme.NavItem[] {
   return [
     {
-      text: 'Guide',
+      text: '简中文档',
+      link: 'https://www.zhcndoc.com',
+      target: '_blank'
+    },
+    {
+      text: '指南',
       link: '/guide/what-is-vitepress',
       activeMatch: '/guide/'
     },
     {
-      text: 'Reference',
+      text: '参考',
       link: '/reference/site-config',
       activeMatch: '/reference/'
     },
@@ -48,11 +53,11 @@ function nav(): DefaultTheme.NavItem[] {
           link: 'https://vuejs.github.io/vitepress/v1/'
         },
         {
-          text: 'Changelog',
+          text: '更新日志',
           link: 'https://github.com/vuejs/vitepress/blob/main/CHANGELOG.md'
         },
         {
-          text: 'Contributing',
+          text: '参与贡献',
           link: 'https://github.com/vuejs/vitepress/blob/main/.github/contributing.md'
         }
       ]
@@ -63,77 +68,77 @@ function nav(): DefaultTheme.NavItem[] {
 function sidebarGuide(): DefaultTheme.SidebarItem[] {
   return [
     {
-      text: 'Introduction',
+      text: '简介',
       collapsed: false,
       items: [
-        { text: 'What is VitePress?', link: 'what-is-vitepress' },
-        { text: 'Getting Started', link: 'getting-started' },
-        { text: 'Routing', link: 'routing' },
-        { text: 'Deploy', link: 'deploy' }
+        { text: '什么是 VitePress？', link: 'what-is-vitepress' },
+        { text: '快速开始', link: 'getting-started' },
+        { text: '路由', link: 'routing' },
+        { text: '部署', link: 'deploy' }
       ]
     },
     {
-      text: 'Writing',
+      text: '写作',
       collapsed: false,
       items: [
-        { text: 'Markdown Extensions', link: 'markdown' },
-        { text: 'Asset Handling', link: 'asset-handling' },
-        { text: 'Frontmatter', link: 'frontmatter' },
-        { text: 'Using Vue in Markdown', link: 'using-vue' },
-        { text: 'Internationalization', link: 'i18n' }
+        { text: 'Markdown 扩展', link: 'markdown' },
+        { text: '资源处理', link: 'asset-handling' },
+        { text: 'frontmatter', link: 'frontmatter' },
+        { text: '在 Markdown 使用 Vue', link: 'using-vue' },
+        { text: '国际化', link: 'i18n' }
       ]
     },
     {
-      text: 'Customization',
+      text: '自定义',
       collapsed: false,
       items: [
-        { text: 'Using a Custom Theme', link: 'custom-theme' },
+        { text: '自定义主题', link: 'custom-theme' },
         {
-          text: 'Extending the Default Theme',
+          text: '扩展默认主题',
           link: 'extending-default-theme'
         },
-        { text: 'Build-Time Data Loading', link: 'data-loading' },
-        { text: 'SSR Compatibility', link: 'ssr-compat' },
-        { text: 'Connecting to a CMS', link: 'cms' }
+        { text: '构建时数据加载', link: 'data-loading' },
+        { text: 'SSR 兼容性', link: 'ssr-compat' },
+        { text: '连接 CMS', link: 'cms' }
       ]
     },
     {
-      text: 'Experimental',
+      text: '实验性功能',
       collapsed: false,
       items: [
-        { text: 'MPA Mode', link: 'mpa-mode' },
-        { text: 'Sitemap Generation', link: 'sitemap-generation' }
+        { text: 'MPA 模式', link: 'mpa-mode' },
+        { text: 'sitemap 生成', link: 'sitemap-generation' }
       ]
     },
-    { text: 'Config & API Reference', base: '/reference/', link: 'site-config' }
+    { text: '配置和 API 参考', base: '/reference/', link: 'site-config' }
   ]
 }
 
 function sidebarReference(): DefaultTheme.SidebarItem[] {
   return [
     {
-      text: 'Reference',
+      text: '参考',
       items: [
-        { text: 'Site Config', link: 'site-config' },
-        { text: 'Frontmatter Config', link: 'frontmatter-config' },
-        { text: 'Runtime API', link: 'runtime-api' },
+        { text: '站点配置', link: 'site-config' },
+        { text: 'frontmatter 配置', link: 'frontmatter-config' },
+        { text: '运行时 API', link: 'runtime-api' },
         { text: 'CLI', link: 'cli' },
         {
-          text: 'Default Theme',
+          text: '默认主题',
           base: '/reference/default-theme-',
           items: [
-            { text: 'Overview', link: 'config' },
-            { text: 'Nav', link: 'nav' },
-            { text: 'Sidebar', link: 'sidebar' },
-            { text: 'Home Page', link: 'home-page' },
-            { text: 'Footer', link: 'footer' },
-            { text: 'Layout', link: 'layout' },
-            { text: 'Badge', link: 'badge' },
-            { text: 'Team Page', link: 'team-page' },
-            { text: 'Prev / Next Links', link: 'prev-next-links' },
-            { text: 'Edit Link', link: 'edit-link' },
-            { text: 'Last Updated Timestamp', link: 'last-updated' },
-            { text: 'Search', link: 'search' },
+            { text: '概览', link: 'config' },
+            { text: '导航栏', link: 'nav' },
+            { text: '侧边栏', link: 'sidebar' },
+            { text: '主页', link: 'home-page' },
+            { text: '页脚', link: 'footer' },
+            { text: '布局', link: 'layout' },
+            { text: '徽章', link: 'badge' },
+            { text: '团队页', link: 'team-page' },
+            { text: '上下页链接', link: 'prev-next-links' },
+            { text: '编辑链接', link: 'edit-link' },
+            { text: '最后更新时间戳', link: 'last-updated' },
+            { text: '搜索', link: 'search' },
             { text: 'Carbon Ads', link: 'carbon-ads' }
           ]
         }
