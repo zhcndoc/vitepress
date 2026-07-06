@@ -1,10 +1,11 @@
-import { readFileSync, writeFileSync } from 'node:fs'
+import { spawn } from 'cross-spawn'
+import type { SpawnOptions } from 'node:child_process'
+import fs from 'node:fs'
+import { createRequire } from 'node:module'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createRequire } from 'node:module'
 import c from 'picocolors'
 import prompts from 'prompts'
-import { execa } from 'execa'
 import semver from 'semver'
 
 const { version: currentVersion } = createRequire(import.meta.url)(
@@ -12,18 +13,34 @@ const { version: currentVersion } = createRequire(import.meta.url)(
 )
 const { inc: _inc, valid } = semver
 
-const versionIncrements = ['patch', 'minor', 'major']
+const versionIncrements = ['patch', 'minor', 'major'] as const
 
-const tags = ['latest', 'next']
+const tags = ['latest', 'next'] as const
 
 const dir = fileURLToPath(new URL('.', import.meta.url))
-const inc = (i) => _inc(currentVersion, i)
-const run = (bin, args, opts = {}) =>
-  execa(bin, args, { stdio: 'inherit', ...opts })
-const step = (msg) => console.log(c.cyan(msg))
+const inc = (i: semver.ReleaseType) => _inc(currentVersion, i)
+const run = (bin: string, args: string[], opts: SpawnOptions = {}) =>
+  new Promise<void>((resolve, reject) => {
+    const child = spawn(bin, args, {
+      stdio: 'inherit',
+      ...opts
+    })
+
+    child.on('error', reject)
+    child.on('close', (code, signal) => {
+      if (code === 0) {
+        resolve()
+      } else if (signal) {
+        reject(new Error(`${bin} exited with signal ${signal}`))
+      } else {
+        reject(new Error(`${bin} exited with code ${code}`))
+      }
+    })
+  })
+const step = (msg: string) => console.log(c.cyan(msg))
 
 async function main() {
-  let targetVersion
+  let targetVersion: string
 
   const versions = versionIncrements
     .map((i) => `${i} (${inc(i)})`)
@@ -33,7 +50,7 @@ async function main() {
     type: 'select',
     name: 'release',
     message: 'Select release type',
-    choices: versions
+    choices: versions.map((title, value) => ({ title, value }))
   })
 
   if (release === 3) {
@@ -46,7 +63,7 @@ async function main() {
       })
     ).version
   } else {
-    targetVersion = versions[release].match(/\((.*)\)/)[1]
+    targetVersion = versions[release].match(/\((.*)\)/)![1]
   }
 
   if (!valid(targetVersion)) {
@@ -57,7 +74,7 @@ async function main() {
     type: 'select',
     name: 'tag',
     message: 'Select tag type',
-    choices: tags
+    choices: tags.map((title, value) => ({ title, value }))
   })
 
   const { yes: tagOk } = await prompts({
@@ -115,13 +132,13 @@ async function main() {
   await run('git', ['push'])
 }
 
-function updatePackage(version) {
+function updatePackage(version: string) {
   const pkgPath = resolve(resolve(dir, '..'), 'package.json')
-  const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'))
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
 
   pkg.version = version
 
-  writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
+  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
 }
 
 main().catch((err) => console.error(err))

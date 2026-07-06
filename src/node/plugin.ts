@@ -7,7 +7,7 @@ import {
   type EnvironmentModuleNode,
   type Plugin,
   type ResolvedConfig,
-  type Rollup,
+  type Rolldown,
   type UserConfig
 } from 'vite'
 import {
@@ -53,14 +53,13 @@ const staticRestoreRE = /__VP_STATIC_(START|END)__/g
 // media queries.
 const scriptClientRE = /<script\b[^>]*client\b[^>]*>([^]*?)<\/script>/
 
-const isPageChunk = (
-  chunk: Rollup.OutputAsset | Rollup.OutputChunk
-): chunk is Rollup.OutputChunk & { facadeModuleId: string } =>
+const isPageChunk = <T extends Rolldown.OutputChunk | Rolldown.RenderedChunk>(
+  chunk: Rolldown.OutputAsset | T
+): chunk is T =>
   !!(
     chunk.type === 'chunk' &&
     chunk.isEntry &&
-    chunk.facadeModuleId &&
-    chunk.facadeModuleId.endsWith('.md')
+    chunk.facadeModuleId?.endsWith('.md')
   )
 
 const cleanUrl = (url: string): string => url.replace(/[?#].*$/s, '')
@@ -285,7 +284,7 @@ export async function createVitePressPlugin(
     },
 
     renderChunk(code, chunk) {
-      if (!ssr && isPageChunk(chunk as Rollup.OutputChunk)) {
+      if (!ssr && isPageChunk(chunk)) {
         // For each page chunk, inject marker for start/end of static strings.
         // we do this here because in generateBundle the chunks would have been
         // minified and we won't be able to safely locate the strings.
@@ -422,14 +421,15 @@ function logDeadLinks(
   devMode = false
 ) {
   const logged = new Set<string>()
-  deadLinks.forEach(({ url, file }, i) => {
-    const key = `${file}:::${url}`
+  deadLinks.forEach(({ url, file, line }, i) => {
+    const location = line == null ? file : `${file}:${line}`
+    const key = `${location}:::${url}`
     if (logged.has(key)) return
     logged.add(key)
     const prefix = '\n'.repeat(i === 0 ? (devMode ? 1 : 2) : 0)
     logger.warn(
       c.yellow(
-        `${prefix}(!) Found dead link ${c.cyan(url)} in file ${c.white(c.dim(file))}`
+        `${prefix}(!) Found dead link ${c.cyan(url)} in file ${c.white(c.dim(location))}`
       )
     )
   })

@@ -10,7 +10,7 @@ description: VitePress 默认主题所有可用配置选项的参考。
 export default {
   lang: 'en-US',
   title: 'VitePress',
-  description: 'Vite & Vue powered static site generator.',
+  description: 'Vite 和 Vue 驱动的静态站点生成器。',
 
   // 主题相关配置
   themeConfig: {
@@ -54,7 +54,7 @@ type ThemeableImage =
 
 - 类型：`string | false`
 
-可以自定义此项以替换导航中的默认站点标题 (应用配置中的 `title`)。当设置为 `false` 时，导航中的标题将被禁用。这在当 `logo` 已经包含站点标题文本时很有用。
+可以自定义此项以替换导航中的默认站点标题（应用配置中的 `title`）。当设置为 `false` 时，导航中的标题将被禁用。这在 `logo` 已经包含站点标题文本时很有用。
 
 ```ts
 export default {
@@ -68,19 +68,19 @@ export default {
 
 - 类型：`NavItem`
 
-导航菜单项的配置。可以在[默认主题: 导航栏](./default-theme-nav#navigation-links) 了解更多详情。
+导航菜单项的配置。可以在[默认主题: 导航栏](./default-theme-nav#navigation-links)了解更多详情。
 
 ```ts
 export default {
   themeConfig: {
     nav: [
-      { text: 'Guide', link: '/guide' },
+      { text: '指南', link: '/guide' },
       {
-        text: 'Dropdown Menu',
+        text: '下拉菜单',
         items: [
-          { text: 'Item A', link: '/item-1' },
-          { text: 'Item B', link: '/item-2' },
-          { text: 'Item C', link: '/item-3' }
+          { text: '项目 A', link: '/item-1' },
+          { text: '项目 B', link: '/item-2' },
+          { text: '项目 C', link: '/item-3' }
         ]
       }
     ]
@@ -112,7 +112,7 @@ interface NavItemWithChildren {
 }
 ```
 
-## sidebar
+## 侧边栏
 
 - 类型：`Sidebar`
 
@@ -123,10 +123,10 @@ export default {
   themeConfig: {
     sidebar: [
       {
-        text: 'Guide',
+        text: '指南',
         items: [
-          { text: 'Introduction', link: '/introduction' },
-          { text: 'Getting Started', link: '/getting-started' },
+          { text: '简介', link: '/introduction' },
+          { text: '快速开始', link: '/getting-started' },
           ...
         ]
       }
@@ -169,7 +169,7 @@ export type SidebarItem = {
 }
 ```
 
-## aside
+## 侧边栏
 
 - 类型：`boolean | 'left'`
 - 默认值：`true`
@@ -181,7 +181,7 @@ export type SidebarItem = {
 
 如果想对所有页面禁用它，应该使用 `outline: false`。
 
-## outline
+## 大纲
 
 - 类型：`Outline | Outline['level'] | false`
 - 每个页面可以通过 [frontmatter](./frontmatter-config#outline) 覆盖层级
@@ -203,7 +203,7 @@ interface Outline {
   /**
    * 显示在 outline 上的标题。
    *
-   * @default 'On this page'
+   * @default '本页内容'
    */
   label?: string
 }
@@ -227,7 +227,7 @@ export default {
           svg: '<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Dribbble</title><path d="M12...6.38z"/></svg>'
         },
         link: '...',
-        // 也可以为无障碍添加一个自定义标签 (可选但推荐):
+        // 也可以为无障碍添加一个自定义标签（可选但推荐）：
         ariaLabel: 'cool link'
       }
     ]
@@ -243,7 +243,7 @@ interface SocialLink {
 }
 ```
 
-## footer
+## 页脚
 
 - 类型：`Footer`
 - 可以通过 [frontmatter](./frontmatter-config#footer) 进行覆盖。
@@ -254,8 +254,8 @@ interface SocialLink {
 export default {
   themeConfig: {
     footer: {
-      message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2019-present Evan You'
+      message: '依据 MIT 许可证发布。',
+      copyright: '版权所有 © 2019-present Evan You'
     }
   }
 }
@@ -280,7 +280,7 @@ export default {
   themeConfig: {
     editLink: {
       pattern: 'https://github.com/vuejs/vitepress/edit/main/docs/:path',
-      text: 'Edit this page on GitHub'
+      text: '在 GitHub 上编辑此页面'
     }
   }
 }
@@ -293,7 +293,7 @@ export interface EditLink {
 }
 ```
 
-## lastUpdated
+## 上次更新
 
 - 类型：`LastUpdatedOptions`
 
@@ -303,7 +303,7 @@ export interface EditLink {
 export default {
   themeConfig: {
     lastUpdated: {
-      text: 'Updated at',
+      text: '更新于',
       formatOptions: {
         dateStyle: 'full',
         timeStyle: 'medium'
@@ -353,20 +353,24 @@ export default {
   themeConfig: {
     carbonAds: {
       code: 'your-carbon-code',
-      placement: 'your-carbon-placement'
+      placement: 'your-carbon-placement',
+      format: 'classic'
     }
   }
 }
 ```
 
+`format` 选项支持 `classic`、`responsive` 和 `cover`。
+
 ```ts
 export interface CarbonAdsOptions {
   code: string
   placement: string
+  format?: 'classic' | 'responsive' | 'cover'
 }
 ```
 
-在 [Default Theme: Carbon Ads](./default-theme-carbon-ads) 中了解更多信息。
+在 [默认主题：Carbon Ads](./default-theme-carbon-ads) 中了解更多信息。
 
 ## docFooter
 
@@ -378,8 +382,8 @@ export interface CarbonAdsOptions {
 export default {
   themeConfig: {
     docFooter: {
-      prev: 'Pagina prior',
-      next: 'Proxima pagina'
+      prev: '上一页',
+      next: '下一页'
     }
   }
 }
@@ -409,7 +413,7 @@ export interface DocFooter {
 ## darkModeSwitchTitle
 
 - 类型：`string`
-- 默认值：`Switch to dark theme`
+- 默认值：`切换到深色主题`
 
 用于自定义悬停时显示的深色模式开关标题。
 
@@ -423,7 +427,7 @@ export interface DocFooter {
 ## returnToTopLabel
 
 - 类型：`string`
-- 默认值：`Return to top`
+- 默认值：`返回顶部`
 
 用于自定义返回顶部按钮的标签，该标签仅在移动端视图中显示。
 

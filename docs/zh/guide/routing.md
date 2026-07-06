@@ -85,13 +85,13 @@ src/getting-started.md  -->  /getting-started.html
 在页面之间链接时，可以使用绝对路径和相对路径。请注意，虽然 `.md` 和 `.html` 扩展名都可以使用，但最佳做法是省略文件扩展名，以便 VitePress 可以根据配置生成最终的 URL。
 
 ```md
-<!-- Do -->
-[Getting Started](./getting-started)
-[Getting Started](../guide/getting-started)
+<!-- 推荐 -->
+[开始使用](./getting-started)
+[开始使用](../guide/getting-started)
 
-<!-- Don't -->
-[Getting Started](./getting-started.md)
-[Getting Started](./getting-started.html)
+<!-- 不推荐 -->
+[开始使用](./getting-started.md)
+[开始使用](./getting-started.html)
 ```
 
 在[资源处理](./asset-handling)中了解有关链接到资源（例如图像）的更多信息。
@@ -103,12 +103,12 @@ src/getting-started.md  -->  /getting-started.html
 **输入**
 
 ```md
-[Link to pure.html](/pure.html){target="_self"}
+[链接到 pure.html](/pure.html){target="_self"}
 ```
 
 **输出**
 
-[Link to pure.html](/pure.html){target="_self"}
+[链接到 pure.html](/pure.html){target="_self"}
 
 ::: tip 注意
 
@@ -117,7 +117,7 @@ src/getting-started.md  -->  /getting-started.html
 或者，可以直接使用锚标记语法：
 
 ```md
-<a href="/pure.html" target="_self">Link to pure.html</a>
+<a href="/pure.html" target="_self">链接到 pure.html</a>
 ```
 
 :::
@@ -203,7 +203,7 @@ export default {
 启用重写后，**相对链接应基于重写的路径**。例如，为了创建从 `packages/pkg-a/src/pkg-a-code.md` 到 `packages/pkg-b/src/pkg-b-code.md` 的相对链接，应该使用：
 
 ```md
-[Link to PKG B](../pkg-b/pkg-b-code)
+[链接到 PKG B](../pkg-b/pkg-b-code)
 ```
 :::
 
@@ -291,7 +291,7 @@ export default {
 从本地文件生成路径：
 
 ```js
-import fs from 'fs'
+import fs from 'node:fs'
 
 export default {
   paths() {
@@ -328,8 +328,8 @@ export default {
 可以使用参数将附加数据传递到每个页面。Markdown 路由文件可以通过 `$params` 全局属性访问 Vue 表达式中的当前页面参数：
 
 ```md
-- package name: {{ $params.pkg }}
-- version: {{ $params.version }}
+- 包名：{{ $params.pkg }}
+- 版本：{{ $params.version }}
 ```
 
 还可以通过 [`useData`](../reference/runtime-api#usedata) 运行时 API 访问当前页面的参数。这在 Markdown 文件和 Vue 组件中都可用：

@@ -6,6 +6,9 @@ import type {
 } from '../../types/shared'
 
 export type {
+  AdditionalConfig,
+  AdditionalConfigDict,
+  AdditionalConfigLoader,
   Awaitable,
   DefaultTheme,
   HeadConfig,
@@ -17,9 +20,7 @@ export type {
   PageDataPayload,
   SiteData,
   SSGContext,
-  AdditionalConfig,
-  AdditionalConfigDict,
-  AdditionalConfigLoader
+  VitePressData
 } from '../../types/shared'
 
 export const EXTERNAL_URL_RE = /^(?:[a-z]+:|\/\/)/i
