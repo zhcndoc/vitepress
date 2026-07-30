@@ -103,6 +103,18 @@ export interface MarkdownOptions extends MarkdownItAsyncOptions {
    * directly only when using `createMarkdownRenderer` standalone.
    */
   locales?: Record<string, MarkdownLocaleOptions>
+  /**
+   * Use `markdown-exit` instead of `markdown-it`.
+   *
+   * Install `markdown-exit` to use this option.
+   *
+   * The `MarkdownRenderer` types used in this project are not fully
+   * compatible with `markdown-exit`. You may need to cast `md` in config
+   * hooks when registering markdown-exit-specific plugins or renderers.
+   *
+   * @experimental
+   */
+  useMarkdownExit?: boolean
 
   /* ==================== Syntax Highlighting ==================== */
 
@@ -368,7 +380,16 @@ export async function createMarkdownRenderer(
 
   _disposeHighlighter = dispose
 
-  md = new MarkdownItAsync({ html: true, linkify: true, highlight, ...options })
+  const mdOptions = { html: true, linkify: true, highlight, ...options }
+  if (options.useMarkdownExit) {
+    // @ts-ignore
+    const { MarkdownExit } = await import('markdown-exit')
+    md = new MarkdownExit(mdOptions) as unknown as MarkdownRenderer
+    // TODO: performance of other plugins can be improved by utilizing async
+    // renderers when useMarkdownExit is enabled
+  } else {
+    md = new MarkdownItAsync(mdOptions)
+  }
 
   md.linkify.set({ fuzzyLink: false })
   restoreEntities(md)

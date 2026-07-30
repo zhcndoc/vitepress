@@ -192,10 +192,14 @@
     "wait-on": "^9.1.0"
   },
   "peerDependencies": {
+    "markdown-exit": "*",
     "markdown-it-mathjax3": "^4",
     "postcss": "^8"
   },
   "peerDependenciesMeta": {
+    "markdown-exit": {
+      "optional": true
+    },
     "markdown-it-mathjax3": {
       "optional": true
     },
