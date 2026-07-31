@@ -19,9 +19,9 @@ VitePress 默认的主题已经针对文档进行了优化，并且可以进行�
 在继续之前，请确保首先阅读[自定义主题](./custom-theme)以了解其工作原理。
 :::
 
-## 自定义 CSS {#customizing-css}
+## Customizing CSS {#customizing-css}
 
-可以通过覆盖根级别的 CSS 变量来自定义默认主题的 CSS：
+You can customize the default theme's CSS by overriding root-level CSS variables:
 
 ```js [.vitepress/theme/index.js]
 import DefaultTheme from 'vitepress/theme'
@@ -38,7 +38,7 @@ export default DefaultTheme
 }
 ```
 
-查看[默认主题 CSS 变量](https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css)来获取可以被覆盖的变量。
+See the [default theme CSS variables](https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css) to find the variables that can be overridden.
 
 ## 使用自定义字体 {#using-different-fonts}
 
@@ -119,11 +119,11 @@ export default {
 } satisfies Theme
 ```
 
-因为我们使用 Vite，还可以利用 Vite 的 [glob 导入功能](https://cn.vitejs.dev/guide/features.html#glob-import)来自动注册一个组件目录。
+因为我们使用 Vite，还可以利用 Vite 的 [glob 导入功能](https://cn.vite.dev/guide/features.html#glob-import)来自动注册一个组件目录。
 
 ## 布局插槽 {#layout-slots}
 
-默认主题的 `<Layout/>` 组件有一些插槽，能够被用来在页面的特定位置注入内容。下面这个例子展示了将一个组件注入到 outline 之前：
+默认主题的 `<Layout/>` 组件有一些插槽，能够被用来在页面的特定位置注入内容。下面这个例子展示了将一个组件注入到大纲之前：
 
 ```js [.vitepress/theme/index.js]
 import DefaultTheme from 'vitepress/theme'
@@ -146,7 +146,7 @@ const { Layout } = DefaultTheme
 <template>
   <Layout>
     <template #aside-outline-before>
-      My custom sidebar top content
+      我的自定义侧边栏顶部内容
     </template>
   </Layout>
 </template>
@@ -294,9 +294,9 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }: MouseEvent) => {
 结果（**注意！**：画面闪烁、快速闪现、强光刺激）:
 
 <details>
-<summary>Demo</summary>
+<summary>演示</summary>
 
-![Appearance Toggle Transition Demo](/appearance-toggle-transition.webp)
+![外观切换过渡演示](/appearance-toggle-transition.webp)
 
 </details>
 
@@ -306,9 +306,9 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }: MouseEvent) => {
 
 即将到来。
 
-## 重写内部组件 {#overriding-internal-components}
+## Overriding Internal Components {#overriding-internal-components}
 
-可以使用 Vite 的 [aliases](https://vitejs.dev/config/shared-options.html#resolve-alias) 来用自定义组件替换默认主题的组件：
+You can use Vite's [aliases](https://vite.dev/config/shared-options.html#resolve-alias) to replace components in the default theme with custom components:
 
 ```ts
 import { fileURLToPath, URL } from 'node:url'
@@ -330,4 +330,4 @@ export default defineConfig({
 })
 ```
 
-想要了解组件的确切名称请参考我们的[源代码](https://github.com/vuejs/vitepress/tree/main/src/client/theme-default/components)。因为组件是内部的，因此在小版本更迭中，它们名字改动的可能性很小。
+To learn the exact names of the components, please refer to our [source code](https://github.com/vuejs/vitepress/tree/main/src/client/theme-default/components). Since these components are internal, their names are unlikely to change in minor releases.

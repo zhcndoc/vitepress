@@ -1,76 +1,88 @@
-# Markdown Extensions
+# Markdown 扩展插件
 
-## Links
+## 链接
 
-### Internal Links
+### 内部链接
 
-- [home](/)
-- [markdown-extensions](/markdown-extensions/)
-- [heading](./#internal-links)
-- [omit extension](./foo)
-- [.md extension](./foo.md)
-- [.html extension](./foo.html)
+- [首页](/)
+- [Markdown 扩展](/markdown-extensions/)
+- [标题](./#internal-links)
+- [省略扩展名](./foo)
+- [.md 扩展名](./foo.md)
+- [.html 扩展名](./foo.html)
 
-### External Links
+### 外部链接
 
-[VitePress on GitHub](https://github.com/vuejs/vitepress)
+[GitHub 上的 VitePress](https://github.com/vuejs/vitepress)。
 
-## GitHub-Style Tables
+## GitHub 风格表格
 
-| Tables        |      Are      |   Cool |
+| 表格          |      很      |   酷 |
 | ------------- | :-----------: | -----: |
-| col 3 is      | right-aligned | \$1600 |
-| col 2 is      |   centered    |   \$12 |
-| zebra stripes |   are neat    |    \$1 |
+| 第 3 列       | 右对齐       | \$1600 |
+| 第 2 列       |   居中       |   \$12 |
+| 斑马条纹      |   很整齐     |    \$1 |
 
-## Emoji
+## 表情符号
 
 - :tada:
 - :100:
 
-## Table of Contents
+## 目录
 
 [[toc]]
 
-## Custom Containers
+## 自定义容器
 
-### Default Title
+### 默认标题
 
 ::: info
-This is an info box.
+这是一个信息框。
 :::
 
 ::: tip
-This is a tip.
+这是一个提示。
 :::
 
 ::: warning
-This is a warning.
+这是一个警告。
 :::
 
 ::: danger
-This is a dangerous warning.
+这是一个危险警告。
 :::
 
 ::: details
-This is a details block.
+这是一个详情块。
 :::
 
-### Custom Title
+::: note
+这是一个注释。
+:::
+
+::: important
+这是一条重要注释。
+:::
+
+::: caution
+这是一条注意事项。
+:::
+
+### 自定义标题
 
 ::: danger STOP
-Danger zone, do not proceed
+危险区域，请勿继续
 :::
 
-::: details Click me to view the code
+::: details 点击我查看代码
 ```js
 console.log('Hello, VitePress!')
 ```
 :::
 
-## Line Highlighting in Code Blocks
+## 代码块中的行高亮
 
-### Single Line
+### 单行
 
 ```js{4}
 export default {
@@ -82,7 +94,7 @@ export default {
 }
 ```
 
-### Multiple single lines, ranges
+### 多个单行、范围
 
 ```js{1,4,6-8}
 export default {
@@ -98,7 +110,7 @@ export default {
 }
 ```
 
-### Comment Highlight
+### 注释高亮
 
 ```js
 export default { // [!code focus]
@@ -113,30 +125,30 @@ export default { // [!code focus]
 }
 ```
 
-## Line Numbers
+## 行号
 
 ```ts:line-numbers
-const line1 = 'This is line 1'
-const line2 = 'This is line 2'
+const line1 = '这是第 1 行'
+const line2 = '这是第 2 行'
 ```
 
-## Import Code Snippets
+## 导入代码片段
 
-### Basic Code Snippet
+### 基本代码片段
 
 <<< @/markdown-extensions/foo.md
 
-### Specify Region
+### 指定区域
 
 <<< @/markdown-extensions/foo.md#snippet
 
-### With Other Features
+### 与其他功能结合
 
-<<< @/markdown-extensions/foo.md#snippet{1 ts:line-numbers} [snippet with region]
+<<< @/markdown-extensions/foo.md#snippet{1 ts:line-numbers} [包含区域的代码片段]
 
-## Code Groups
+## 代码组
 
-### Basic Code Group
+### 基础代码组
 
 ::: code-group
 
@@ -163,60 +175,60 @@ export default config
 
 :::
 
-### With Other Features
+### 与其他功能结合使用
 
 ::: code-group
 
 <<< @/markdown-extensions/foo.md
 
-<<< @/markdown-extensions/foo.md#snippet{1 ts:line-numbers} [snippet with region]
+<<< @/markdown-extensions/foo.md#snippet{1 ts:line-numbers} [带区域的代码片段]
 
 :::
 
-## Markdown File Inclusion
+## Markdown 文件包含
 
 <!--@include: ./foo.md-->
 
-## Markdown At File Inclusion
+## 使用 @ 包含文件
 
 <!--@include: @/markdown-extensions/bar.md-->
 
-## Markdown Nested File Inclusion
+## Markdown 嵌套文件包含
 
 <!--@include: ./nested-include.md-->
 
-## Markdown File Inclusion with Range
+## 使用范围包含 Markdown 文件
 
 <!--@include: ./foo.md{6,8}-->
 
-## Markdown File Inclusion with Range without Start
+## 不带起始位置的范围 Markdown 文件引入
 
 <!--@include: ./foo.md{,8}-->
 
-## Markdown File Inclusion with Range without End
+## Markdown 文件包含（范围无结束位置）
 
 <!--@include: ./foo.md{6,}-->
 
-## Markdown At File Region Snippet
+## Markdown 文件区域片段
 
 <!--@include: ./region-include.md#snippet-->
 
-## Markdown At File Range Region Snippet
+## Markdown 文件范围区域片段
 
 <!--@include: ./region-include.md#range-region{3,4}-->
 
-## Markdown At File Range Region Snippet without start
+## 不带起始位置的文件范围区域 Markdown 片段
 
 <!--@include: ./region-include.md#range-region{,2}-->
 
-## Markdown At File Range Region Snippet without end
+## Markdown 文件范围区域片段（无结束位置）
 
 <!--@include: ./region-include.md#range-region{5,}-->
 
-## Markdown File Inclusion with Header
+## 带标题的 Markdown 文件包含
 
 <!--@include: ./header-include.md#header-1-1-->
 
-## Image Lazy Loading
+## 图片懒加载
 
-![vitepress logo](/vitepress.png)
+![VitePress 徽标](/vitepress.png)

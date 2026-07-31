@@ -1,5 +1,6 @@
 ---
 description: VitePress 内置的 Markdown 扩展，包括自定义容器、代码块语法高亮、行高亮、代码组等功能。
+outline: deep
 ---
 
 # Markdown 扩展 {#markdown-extensions}
@@ -46,9 +47,9 @@ VitePress 带有内置的 Markdown 扩展。
 假设现在处于 `foo/one.md` 文件中：
 
 ```md
-[Home](/) <!-- 将用户导航至根目录下的 index.html -->
+[主页](/) <!-- 将用户导航至根目录下的 index.html -->
 [foo](/foo/) <!-- 将用户导航至目录 foo 下的 index.html -->
-[foo heading](./#heading) <!-- 将用户锚定到目录 foo 下的index文件中的一个标题上 -->
+[foo 标题](./#heading) <!-- 将用户锚定到目录 foo 下的 index 文件中的一个标题上 -->
 [bar - three](../bar/three) <!-- 可以省略扩展名 -->
 [bar - three](../bar/three.md) <!-- 可以添加 .md -->
 [bar - four](../bar/four.html) <!-- 或者可以添加 .html -->
@@ -63,7 +64,7 @@ VitePress 带有内置的 Markdown 扩展。
 外部链接带有 `target="_blank" rel="noreferrer"`：
 
 - [vuejs.org](https://cn.vuejs.org)
-- [VitePress on GitHub](https://github.com/vuejs/vitepress)
+- [GitHub 上的 VitePress](https://github.com/vuejs/vitepress)。
 
 ## frontmatter {#frontmatter}
 
@@ -94,13 +95,13 @@ lang: en-US
 
 **输出**
 
-| Tables        |      Are      |   Cool |
+| 表格          |      是       |   很酷 |
 | ------------- | :-----------: | -----: |
-| col 3 is      | right-aligned | \$1600 |
-| col 2 is      |   centered    |   \$12 |
-| zebra stripes |   are neat    |    \$1 |
+| 第 3 列       |    右对齐     | \$1600 |
+| 第 2 列       |    居中       |   \$12 |
+| 斑马条纹      |    很整齐     |    \$1 |
 
-## Emoji :tada:
+## 表情符号 :tada:
 
 **输入**
 
@@ -112,7 +113,7 @@ lang: en-US
 
 :tada: :100:
 
-这里可以找到[所有支持的 emoji 列表](https://github.com/markdown-it/markdown-it-emoji/blob/master/lib/data/full.mjs)。
+这里可以找到[所有支持的表情符号列表](https://github.com/mdit-plugins/mdit-plugins/blob/main/packages/plugin-emoji/src/data/full.ts)。
 
 ## 目录表 (TOC) {#table-of-contents}
 
@@ -138,46 +139,46 @@ lang: en-US
 
 ```md
 ::: info
-This is an info box.
+这是一个信息框。
 :::
 
 ::: tip
-This is a tip.
+这是一个提示。
 :::
 
 ::: warning
-This is a warning.
+这是一个警告。
 :::
 
 ::: danger
-This is a dangerous warning.
+这是一个危险警告。
 :::
 
 ::: details
-This is a details block.
+这是一个详细信息块。
 :::
 ```
 
 **输出**
 
 ::: info
-This is an info box.
+这是一个信息框。
 :::
 
 ::: tip
-This is a tip.
+这是一个提示。
 :::
 
 ::: warning
-This is a warning.
+这是一个警告。
 :::
 
 ::: danger
-This is a dangerous warning.
+这是一个危险警告。
 :::
 
 ::: details
-This is a details block.
+这是一个详细信息块。
 :::
 
 ### 自定义标题 {#custom-title}
@@ -187,7 +188,7 @@ This is a details block.
 **输入**
 
 ````md
-::: danger STOP
+::: danger 停止
 危险区域，请勿继续
 :::
 
@@ -200,7 +201,7 @@ console.log('Hello, VitePress!')
 
 **输出**
 
-::: danger STOP
+::: danger 停止
 危险区域，请勿继续
 :::
 
@@ -213,7 +214,7 @@ console.log('Hello, VitePress!')
 此外，可以通过在站点配置中添加以下内容来全局设置自定义标题，如果不是用英语书写，这会很有帮助：
 
 ```ts
-// config.ts
+// 配置文件
 export default defineConfig({
   // ...
   markdown: {
@@ -231,13 +232,13 @@ export default defineConfig({
 
 ### `raw`
 
-这是一个特殊的容器，可以用来防止与 VitePress 的样式和路由冲突。这在记录组件库时特别有用。可能还想查看 [whyframe](https://whyframe.dev/docs/integrations/vitepress) 以获得更好的隔离。
+这是一个特殊的容器，可以用来防止与 VitePress 的样式和路由冲突。这在记录组件库时特别有用。
 
 **语法**
 
 ```md
 ::: raw
-Wraps in a `<div class="vp-raw">`
+包装在一个 `<div class="vp-raw">` 中
 :::
 ```
 
@@ -387,7 +388,7 @@ export default {
 
 ````
 ```js{1,4,6-8}
-export default { // Highlighted
+export default { // 高亮
   data () {
     return {
       msg: `Highlighted!
@@ -404,7 +405,7 @@ export default { // Highlighted
 **输出**
 
 ```js{1,4,6-8}
-export default { // Highlighted
+export default { // 高亮
   data () {
     return {
       msg: `Highlighted!
@@ -621,7 +622,7 @@ const line4 = 'This is line 4'
 <<< @/snippets/snippet.js{2}
 ```
 
-**Code file**
+**代码文件**
 
 <<< @/snippets/snippet.js
 
@@ -638,7 +639,7 @@ const line4 = 'This is line 4'
 
 :::
 
-也可以使用 [VS Code region](https://code.visualstudio.com/docs/editor/codebasics#_folding) 来只包含代码文件的相应部分。可以在文件目录后面的 `#` 符号后提供一个自定义的区域名：
+也可以使用 [VS Code 区域](https://code.visualstudio.com/docs/editor/codebasics#_folding) 来只包含代码文件的相应部分。可以在文件目录后面的 `#` 符号后提供一个自定义的区域名：
 
 **输入**
 
@@ -646,7 +647,7 @@ const line4 = 'This is line 4'
 <<< @/snippets/snippet-with-region.js#snippet{1}
 ```
 
-**Code file**
+**代码文件**
 
 <<< @/snippets/snippet-with-region.js
 
@@ -668,7 +669,7 @@ const line4 = 'This is line 4'
 <<< @/snippets/snippet.cs{1,2,4-6 c#:line-numbers}
 ```
 
-如果无法从文件扩展名推测出源语言，这将会很有帮助
+如果无法从文件扩展名推测出源语言，这将会很有帮助。
 
 ## 代码组 {#code-groups}
 
@@ -743,7 +744,7 @@ export default config
 
 <!-- 也可以提供定制的代码组 -->
 
-<<< @/snippets/snippet-with-region.js#snippet{1,2 ts:line-numbers} [snippet with region]
+<<< @/snippets/snippet-with-region.js#snippet{1,2 ts:line-numbers} [带区域的代码片段]
 
 :::
 ```
@@ -754,13 +755,13 @@ export default config
 
 <<< @/snippets/snippet.js
 
-<<< @/snippets/snippet-with-region.js#snippet{1,2 ts:line-numbers} [snippet with region]
+<<< @/snippets/snippet-with-region.js#snippet{1,2 ts:line-numbers} [带区域的代码片段]
 
 :::
 
-## 包含 markdown 文件 {#markdown-file-inclusion}
+## 包含 Markdown 文件 {#markdown-file-inclusion}
 
-可以像这样在一个 markdown 文件中包含另一个 markdown 文件，甚至是内嵌的。
+可以像这样在一个 Markdown 文件中包含另一个 Markdown 文件，甚至是内嵌的。
 
 ::: tip
 也可以使用 `@`，它的值对应于源代码根目录，默认情况下是 VitePress 项目根目录，除非配置了 `srcDir`。
@@ -778,7 +779,7 @@ export default config
 <!--@@include: ./parts/basics.md-->
 ```
 
-**Part file** (`parts/basics.md`)
+**部分文件** (`parts/basics.md`)
 
 ```md
 Some getting started stuff.
@@ -814,7 +815,7 @@ Can be created using `.foorc.json`.
 <!--@@include: ./parts/basics.md{3,}-->
 ```
 
-**Part file** (`parts/basics.md`)
+**部分文件** (`parts/basics.md`)
 
 ```md
 Some getting started stuff.
@@ -888,14 +889,14 @@ $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
 
 ## 图片懒加载 {#image-lazy-loading}
 
-通过在配置文件中将 `lazyLoading` 设置为 `true`，可以为通过 markdown 添加的每张图片启用懒加载。
+通过在配置文件中将 `lazyLoad` 设置为 `true`，可以为通过 markdown 添加的每张图片启用懒加载。
 
 ```js
 export default {
   markdown: {
     image: {
       // 默认禁用；设置为 true 可为所有图片启用懒加载。
-      lazyLoading: true
+      lazyLoad: true
     }
   }
 }
@@ -907,15 +908,15 @@ VitePress 使用 [markdown-it](https://github.com/markdown-it/markdown-it) 作�
 
 ```js
 import { defineConfig } from 'vitepress'
-import markdownItAnchor from 'markdown-it-anchor'
+import { headerLink } from '@mdit/plugin-anchor'
 import markdownItFoo from 'markdown-it-foo'
 
 export default defineConfig({
   markdown: {
-    // markdown-it-anchor 的选项
-    // https://github.com/valeriangalliat/markdown-it-anchor#usage
+    // @mdit/plugin-anchor 的选项
+    // https://mdit-plugins.github.io/anchor.html
     anchor: {
-      permalink: markdownItAnchor.permalink.headerLink()
+      permalink: headerLink()
     },
     // @mdit-vue/plugin-toc 的选项
     // https://github.com/mdit-vue/mdit-vue/tree/main/packages/plugin-toc#options

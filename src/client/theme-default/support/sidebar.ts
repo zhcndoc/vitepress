@@ -6,6 +6,8 @@ export interface SidebarLink {
   text: string
   link: string
   docFooterText?: string
+  rel?: string
+  target?: string
 }
 
 type SidebarItem = DefaultTheme.SidebarItem
@@ -75,7 +77,9 @@ export function getFlatSideBarLinks(sidebar: SidebarItem[]): SidebarLink[] {
         links.push({
           text: item.text,
           link: item.link,
-          docFooterText: item.docFooterText
+          docFooterText: item.docFooterText,
+          rel: item.rel,
+          target: item.target
         })
       }
 
@@ -95,17 +99,19 @@ export function getFlatSideBarLinks(sidebar: SidebarItem[]): SidebarLink[] {
  */
 export function hasActiveLink(
   path: string,
+  hash: string,
   items: SidebarItem | SidebarItem[]
 ): boolean {
   if (Array.isArray(items)) {
-    return items.some((item) => hasActiveLink(path, item))
+    return items.some((item) => hasActiveLink(path, hash, item))
   }
-
-  return isActive(path, items.link)
-    ? true
-    : items.items
-      ? hasActiveLink(path, items.items)
-      : false
+  if (items.link && isActive(path, hash, items.link)) {
+    return true
+  }
+  if (items.items) {
+    return hasActiveLink(path, hash, items.items)
+  }
+  return false
 }
 
 function addBase(items: SidebarItem[], _base?: string): SidebarItem[] {

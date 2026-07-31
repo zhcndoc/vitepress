@@ -20,7 +20,7 @@ export default {
   // 应用级配置选项
   lang: 'en-US',
   title: 'VitePress',
-  description: 'Vite & Vue powered static site generator.',
+  description: '由 Vite 和 Vue 驱动的静态站点生成器。',
   ...
 }
 ```
@@ -39,7 +39,7 @@ export default async () => {
     // 应用级配置选项
     lang: 'en-US',
     title: 'VitePress',
-    description: 'Vite & Vue powered static site generator.',
+    description: '由 Vite 和 Vue 驱动的静态站点生成器。',
 
     // 主题级配置选项
     themeConfig: {
@@ -65,7 +65,7 @@ export default defineConfig({
   // 应用级配置选项
   lang: 'en-US',
   title: 'VitePress',
-  description: 'Vite & Vue powered static site generator.',
+  description: '由 Vite 和 Vue 驱动的静态站点生成器。',
 
   // 主题级别配置选项
   themeConfig: {
@@ -430,7 +430,7 @@ export default {
 - 类型：`string`
 - 默认值： `./.vitepress/cache`
 
-缓存文件的目录，相对于[项目根目录](../guide/routing#root-and-source-directory)。另请参阅：[cacheDir](https://vitejs.dev/config/shared-options.html#cachedir)。
+缓存文件的目录，相对于[项目根目录](../guide/routing#root-and-source-directory)。另请参阅：[cacheDir](https://vite.dev/config/shared-options.html#cachedir)。
 
 ```ts
 export default {
@@ -445,7 +445,7 @@ export default {
 
 当设置为 `true` 时，VitePress 不会因为死链而导致构建失败。
 
-当设置为 `'localhostLinks'` ，出现死链时构建将失败，但不会检查 `localhost` 链接。
+当设置为 `'localhostLinks'` 时，出现死链时构建将失败，但不会检查 `localhost` 链接。
 
 ```ts
 export default {
@@ -453,7 +453,7 @@ export default {
 }
 ```
 
-它也可以是一组精确的 url 字符串、正则表达式模式或自定义过滤函数。
+它也可以是一组精确的 URL 字符串、正则表达式模式或自定义过滤函数。
 
 ```ts
 export default {
@@ -472,45 +472,38 @@ export default {
 }
 ```
 
-### metaChunk <Badge type="warning" text="experimental" />
-
-- 类型：`boolean`
-- 默认值：`false`
-
-当设置为 `true` 时，将页面元数据提取到单独的 JavaScript 块中，而不是内联在初始 HTML 中。这使每个页面的 HTML 负载更小，并使页面元数据可缓存，从而当站点中有很多页面时可以减少服务器带宽。
-
 ### mpa <Badge type="warning" text="experimental" />
 
 - 类型：`boolean`
 - 默认值： `false`
 
-设置为 `true` 时，生产应用程序将在 [MPA 模式](../guide/mpa-mode)下构建。MPA 模式默认提供 零 JavaScript 支持，代价是禁用客户端导航，并且需要明确选择加入才能进行交互。
+设置为 `true` 时，生产应用程序将在 [MPA 模式](../guide/mpa-mode)下构建。MPA 模式默认提供零 JavaScript 支持，代价是禁用客户端导航，并且需要明确选择加入才能进行交互。
 
 ## 主题 {#theming}
 
-### appearance
+### 外观
 
 - 类型：`boolean | 'dark' | 'force-dark' | import('@vueuse/core').UseDarkOptions`
 - 默认值： `true`
 
-是否启用深色模式 (通过将 `.dark` 类添加到 `<html>` 元素)。
+是否启用深色模式（通过将 `.dark` 类添加到 `<html>` 元素）。
 
 - 如果该选项设置为 `true`，则默认主题将由用户的首选配色方案决定。
-- 如果该选项设置为 `dark`，则默认情况下主题将是深色的，除非用户手动切换它。
+- 如果该选项设置为 `dark`，则默认情况下主题将是深色的，除非用户手动切换。
 - 如果该选项设置为 `false`，用户将无法切换主题。
 
-此选项注入一个内联脚本，使用 `vitepress-theme-appearance` key 从本地存储恢复用户设置。这确保在呈现页面之前应用 `.dark` 类以避免闪烁。
+此选项注入一个内联脚本，使用 `vitepress-theme-appearance` 键从本地存储中恢复用户设置。这确保在呈现页面之前应用 `.dark` 类，以避免闪烁。
 
-`appearance.initialValue` 只能是 `'dark' | undefined`。 不支持 Refs 或 getters。
+`appearance.initialValue` 只能是 `'dark' | undefined`。不支持 Refs 或 getter。
 
-### lastUpdated
+### 最后更新
 
 - 类型：`boolean`
 - 默认值： `false`
 
 是否使用 Git 获取每个页面的最后更新时间戳。时间戳将包含在每个页面的页面数据中，可通过 [`useData`](./runtime-api#usedata) 访问。
 
-使用默认主题时，启用此选项将显示每个页面的最后更新时间。可以通过 [`themeConfig.lastUpdatedText`](./default-theme-config#lastupdatedtext) 选项自定义文本。
+使用默认主题时，启用此选项将显示每个页面的最后更新时间。可以通过 [`themeConfig.lastUpdated.text`](./default-theme-config#lastupdated) 选项自定义文本。
 
 ## 自定义 {#customization}
 
@@ -532,7 +525,7 @@ export default {
 
 - 类型：`import('vite').UserConfig`
 
-将原始 [Vite 配置](https://vitejs.dev/config/)传递给内部 Vite 开发服务器 / bundler。
+将原始 [Vite 配置](https://vite.dev/config/)传递给内部 Vite 开发服务器 / bundler。
 
 ```js
 export default {

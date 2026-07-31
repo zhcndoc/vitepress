@@ -117,8 +117,7 @@ const showDetailedList = useLocalStorage(
 const disableDetailedView = computed(() => {
   return (
     theme.value.search?.provider === 'local' &&
-    (theme.value.search.options?.disableDetailedView === true ||
-      theme.value.search.options?.detailedView === false)
+    theme.value.search.options?.detailedView === false
   )
 })
 
@@ -730,7 +729,7 @@ function onMouseMove(e: MouseEvent) {
   }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   .search-actions.before {
     display: none;
   }

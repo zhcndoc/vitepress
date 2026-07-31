@@ -11,7 +11,7 @@ description: 确保 VitePress 主题组件和自定义代码兼容服务端渲�
 
 ## `<ClientOnly>`
 
-如果正在使用或演示不支持 SSR 的组件 (例如，包含自定义指令)，则可以将它们包装在内置的 `<ClientOnly>` 组件中：
+如果正在使用或演示不支持 SSR 的组件（例如，包含自定义指令），则可以将它们包装在内置的 `<ClientOnly>` 组件中：
 
 ```md
 <ClientOnly>
@@ -31,7 +31,7 @@ import { onMounted } from 'vue'
 
 onMounted(() => {
   import('./lib-that-access-window-on-import').then((module) => {
-    // use code
+    // 使用代码
   })
 })
 </script>
@@ -39,12 +39,12 @@ onMounted(() => {
 
 ### 条件导入 {#conditional-import}
 
-也可以使用 `import.meta.env.SSR` 标志 ([Vite 环境变量](https://cn.vitejs.dev/guide/env-and-mode.html#env-variables)的一部分) 来有条件地导入依赖项：
+也可以使用 `import.meta.env.SSR` 标志 ([Vite 环境变量](https://cn.vite.dev/guide/env-and-mode.html#env-variables)的一部分) 来有条件地导入依赖项：
 
 ```js
 if (!import.meta.env.SSR) {
   import('./lib-that-access-window-on-import').then((module) => {
-    // use code
+    // 使用代码
   })
 }
 ```
@@ -132,4 +132,4 @@ const ClientComp = defineClientComponent(
 </template>
 ```
 
-目标组件将仅在 wrapper 组件的 mounted 钩子中导入。
+目标组件将仅在包装组件的 mounted 钩子中导入。

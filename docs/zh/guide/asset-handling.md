@@ -6,7 +6,7 @@ description: 了解如何在 VitePress 中引用和处理静态资源，如图�
 
 ## 引用静态资源 {#referencing-static-assets}
 
-所有的 Markdown 文件都会被编译成 Vue 组件，并由 [Vite](https://cn.vitejs.dev/guide/assets.html) 处理。可以**并且应该**使用相对路径来引用资源：
+所有的 Markdown 文件都会被编译成 Vue 组件，并由 [Vite](https://cn.vite.dev/guide/assets.html) 处理。可以**并且应该**使用相对路径来引用资源：
 
 ```md
 ![An image](./image.png)
@@ -26,7 +26,7 @@ description: 了解如何在 VitePress 中引用和处理静态资源，如图�
 
 ## public 目录 {#the-public-directory}
 
-有时可能需要一些静态资源，但这些资源没有直接被 Markdown 或主题组件直接引用，或者你可能想以原始文件名提供某些文件，像 `robots.txt`，favicons 和 PWA 图标这样的文件。
+有时可能需要一些静态资源，但这些资源没有直接被 Markdown 或主题组件直接引用，或者你可能想以原始文件名提供某些文件，像 `robots.txt`，网站图标和 PWA 图标这样的文件。
 
 可以将这些文件放置在[源目录](./routing#source-directory)的 `public` 目录中。例如，如果项目根目录是 `./docs`，并且使用默认源目录位置，那么 public 目录将是 `./docs/public`。
 
@@ -52,7 +52,7 @@ description: 了解如何在 VitePress 中引用和处理静态资源，如图�
 <img :src="theme.logoPath" />
 ```
 
-在这种情况下，建议使用 VitePress 提供的 [`withBase` helper](../reference/runtime-api#withbase) 来包括路径：
+在这种情况下，建议使用 VitePress 提供的 [`withBase` 辅助函数](../reference/runtime-api#withbase) 来包括路径：
 
 ```vue
 <script setup>

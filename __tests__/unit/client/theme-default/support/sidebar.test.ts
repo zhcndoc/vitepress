@@ -1,4 +1,8 @@
-import { getSidebar, hasActiveLink } from 'client/theme-default/support/sidebar'
+import {
+  getFlatSideBarLinks,
+  getSidebar,
+  hasActiveLink
+} from 'client/theme-default/support/sidebar'
 
 describe('client/theme-default/support/sidebar', () => {
   describe('getSidebar', () => {
@@ -137,6 +141,43 @@ describe('client/theme-default/support/sidebar', () => {
     })
   })
 
+  describe('getFlatSideBarLinks', () => {
+    test('flattens nested items and preserves link metadata', () => {
+      const sidebar = [
+        {
+          text: 'Group',
+          items: [
+            { text: 'Intro', link: '/intro' },
+            {
+              text: 'External',
+              link: 'https://example.com/',
+              target: '_self',
+              rel: 'noopener',
+              docFooterText: 'Go external'
+            }
+          ]
+        }
+      ]
+
+      expect(getFlatSideBarLinks(sidebar)).toStrictEqual([
+        {
+          text: 'Intro',
+          link: '/intro',
+          docFooterText: undefined,
+          rel: undefined,
+          target: undefined
+        },
+        {
+          text: 'External',
+          link: 'https://example.com/',
+          docFooterText: 'Go external',
+          rel: 'noopener',
+          target: '_self'
+        }
+      ])
+    })
+  })
+
   describe('hasActiveLink', () => {
     test('checks `SidebarItem`', () => {
       const item = {
@@ -147,8 +188,8 @@ describe('client/theme-default/support/sidebar', () => {
         ]
       }
 
-      expect(hasActiveLink('active-1', item)).toBe(true)
-      expect(hasActiveLink('inactive', item)).toBe(false)
+      expect(hasActiveLink('active-1', '', item)).toBe(true)
+      expect(hasActiveLink('inactive', '', item)).toBe(false)
     })
 
     test('checks `SidebarItem[]`', () => {
@@ -169,9 +210,9 @@ describe('client/theme-default/support/sidebar', () => {
         }
       ]
 
-      expect(hasActiveLink('active-1', item)).toBe(true)
-      expect(hasActiveLink('active-3', item)).toBe(true)
-      expect(hasActiveLink('inactive', item)).toBe(false)
+      expect(hasActiveLink('active-1', '', item)).toBe(true)
+      expect(hasActiveLink('active-3', '', item)).toBe(true)
+      expect(hasActiveLink('inactive', '', item)).toBe(false)
     })
   })
 })

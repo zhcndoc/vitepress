@@ -13,7 +13,6 @@ export function resolveTitle(theme: DefaultTheme.Config): string {
     (typeof theme.outline === 'object' &&
       !Array.isArray(theme.outline) &&
       theme.outline.label) ||
-    theme.outlineTitle ||
     'On this page'
   )
 }
@@ -85,10 +84,12 @@ export function useActiveAnchor(
   const onScroll = throttleAndDebounce(setActiveLink, 100)
 
   let prevActiveLink: HTMLAnchorElement | null = null
+  let ignoreScrollOnce: boolean = false
 
   onMounted(() => {
     requestAnimationFrame(setActiveLink)
     window.addEventListener('scroll', onScroll)
+    container.value.addEventListener('click', onClick)
   })
 
   onUpdated(() => {
@@ -100,8 +101,27 @@ export function useActiveAnchor(
     window.removeEventListener('scroll', onScroll)
   })
 
+  function onClick(e: MouseEvent) {
+    if (!isAsideEnabled.value) {
+      return
+    }
+
+    const hash =
+      e.target instanceof Element ? e.target.closest('a')?.hash : null
+
+    if (hash) {
+      ignoreScrollOnce = true
+      activateLink(hash)
+    }
+  }
+
   function setActiveLink() {
     if (!isAsideEnabled.value) {
+      return
+    }
+
+    if (ignoreScrollOnce) {
+      ignoreScrollOnce = false
       return
     }
 
@@ -159,7 +179,7 @@ export function useActiveAnchor(
       prevActiveLink = null
     } else {
       prevActiveLink = container.value.querySelector(
-        `a[href="${decodeURIComponent(hash)}"]`
+        `a[href$="${decodeURIComponent(hash)}"]`
       )
     }
 

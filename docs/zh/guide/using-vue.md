@@ -144,7 +144,7 @@ This is a .md using a custom component
 被 `<code>` 包裹的 HTML 将按原样显示，只有未包裹的 HTML 才会被 Vue 解析。
 
 ::: tip
-输出 HTML 由 [Markdown-it](https://github.com/Markdown-it/Markdown-it) 完成，而解析的标题由 VitePress 处理 (并用于侧边栏和文档标题)。
+输出 HTML 由 [Markdown-it](https://github.com/Markdown-it/Markdown-it) 完成，而解析的标题由 VitePress 处理（并用于侧边栏和文档标题）。
 :::
 
 
@@ -155,20 +155,20 @@ This is a .md using a custom component
 **输入**
 
 ```md
-This <span v-pre>{{ will be displayed as-is }}</span>
+这 <span v-pre>{{ 将原样显示 }}</span>
 ```
 
 **输出**
 
 <div class="escape-demo">
-  <p>This <span v-pre>{{ will be displayed as-is }}</span></p>
+  <p>这 <span v-pre>{{ 将原样显示 }}</span></p>
 </div>
 
 也可以将整个段落包装在 `v-pre` 自定义容器中：
 
 ```md
 ::: v-pre
-{{ This will be displayed as-is }}`
+{{ 这将原样显示 }}`
 :::
 ```
 
@@ -177,7 +177,7 @@ This <span v-pre>{{ will be displayed as-is }}</span>
 <div class="escape-demo">
 
 ::: v-pre
-{{ This will be displayed as-is }}
+{{ 这将原样显示 }}
 :::
 
 </div>
@@ -204,16 +204,16 @@ Hello {{ 1 + 1 }}
 
 ## 使用 CSS 预处理器 {#using-css-pre-processors}
 
-VitePress [内置支持](https://cn.vitejs.dev/guide/features.html#css-pre-processors) CSS 预处理器：`.scss`、`.sass`、.`less`、`.styl` 和 `.stylus` 文件。无需为它们安装 Vite 专用插件，但必须安装相应的预处理器：
+VitePress [内置支持](https://cn.vite.dev/guide/features.html#css-pre-processors) CSS 预处理器：`.scss`、`.sass`、.`less`、`.styl` 和 `.stylus` 文件。无需为它们安装 Vite 专用插件，但必须安装相应的预处理器：
 
 ```
-# .scss and .sass
+# .scss 和 .sass
 npm install -D sass
 
 # .less
 npm install -D less
 
-# .styl and .stylus
+# .styl 和 .stylus
 npm install -D stylus
 ```
 
