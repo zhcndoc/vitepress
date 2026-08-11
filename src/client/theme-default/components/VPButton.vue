@@ -29,7 +29,7 @@ const component = computed(() => {
 <template>
   <component
     :is="component"
-    class="VPButton"
+    class="VPButton no-icon"
     :class="[size, theme]"
     :href="href ? normalizeLink(href) : undefined"
     :target="props.target ?? (isExternal ? '_blank' : undefined)"
@@ -46,6 +46,7 @@ const component = computed(() => {
   text-align: center;
   font-weight: 600;
   white-space: nowrap;
+  text-decoration: none;
   transition: color 0.25s, border-color 0.25s, background-color 0.25s;
 }
 
@@ -54,17 +55,17 @@ const component = computed(() => {
 }
 
 .VPButton.medium {
-  border-radius: 20px;
-  padding: 0 20px;
-  line-height: 38px;
-  font-size: 14px;
+  border-radius: 1.25rem;
+  padding: 0 1.25rem;
+  line-height: 2.7142857;
+  font-size: 0.875rem;
 }
 
 .VPButton.big {
-  border-radius: 24px;
-  padding: 0 24px;
-  line-height: 46px;
-  font-size: 16px;
+  border-radius: 1.5rem;
+  padding: 0 1.5rem;
+  line-height: 2.875;
+  font-size: 1rem;
 }
 
 .VPButton.brand {

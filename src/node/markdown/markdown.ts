@@ -53,7 +53,14 @@ import { lineNumberPlugin } from './plugins/lineNumbers'
 import { linkPlugin } from './plugins/link'
 import { preWrapperPlugin } from './plugins/preWrapper'
 import { restoreEntities } from './plugins/restoreEntities'
-import { snippetPlugin } from './plugins/snippet'
+import {
+  includePlugin,
+  type Options as IncludePluginOptions
+} from './plugins/include'
+import {
+  snippetPlugin,
+  type Options as SnippetPluginOptions
+} from './plugins/snippet'
 import { tablePlugin } from './plugins/table'
 
 export type { Header } from '../shared'
@@ -212,11 +219,17 @@ export interface MarkdownOptions extends MarkdownItAsyncOptions {
    */
   lineNumbers?: boolean
   /**
-   * Enables importing code snippets from files with `<<<`.
-   * @default true
+   * Options for importing code snippets from files with `<<<`. Set to
+   * `false` to disable.
    * @see https://vitepress.dev/guide/markdown#import-code-snippets
    */
-  snippet?: boolean
+  snippet?: SnippetPluginOptions | boolean
+  /**
+   * Options for including markdown files with `<!-- @include: path -->`.
+   * Set to `false` to disable.
+   * @see https://vitepress.dev/guide/markdown#markdown-file-inclusion
+   */
+  include?: IncludePluginOptions | boolean
 
   /* ==================== Markdown Extensions ==================== */
 
@@ -412,7 +425,7 @@ export async function createMarkdownRenderer(
     lineNumberPlugin(md, options.lineNumbers)
   }
   if (options.snippet !== false) {
-    snippetPlugin(md, srcDir)
+    snippetPlugin(md, srcDir, normalizePluginOptions(options.snippet), logger)
   }
   const containerOptions = normalizePluginOptions(options.container)
   if (options.container !== false) {
@@ -430,6 +443,11 @@ export async function createMarkdownRenderer(
     base,
     slugify
   )
+  // must come after the image and link plugins so that url rebasing runs
+  // before their href/src handling
+  if (options.include !== false) {
+    includePlugin(md, srcDir, normalizePluginOptions(options.include), logger)
+  }
   if (options.tableTabIndex !== false) {
     tablePlugin(md)
   }
