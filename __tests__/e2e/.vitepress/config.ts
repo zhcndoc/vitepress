@@ -65,6 +65,11 @@ const nav: DefaultTheme.Config['nav'] = [
         ]
       }
     ]
+  },
+  {
+    text: 'Active Match',
+    link: '/markdown-extensions/',
+    activeMatch: '^/home'
   }
 ]
 
@@ -153,6 +158,23 @@ const sidebar: DefaultTheme.Config['sidebar'] = {
           link: '/team-and-sponsors/home-no-markdown-styles'
         }
       ]
+    },
+    {
+      text: 'Sidebar Hash',
+      items: [
+        {
+          text: 'Overview',
+          link: '/sidebar-hash/'
+        },
+        {
+          text: 'Section One',
+          link: '/sidebar-hash/#section-one'
+        },
+        {
+          text: 'Section Two',
+          link: '/sidebar-hash/#section-two'
+        }
+      ]
     }
   ],
   '/multi-sidebar/': [
@@ -179,6 +201,8 @@ export default defineConfig({
   markdown: {
     image: { lazyLoad: true }
   },
+  // exercises force-inclusion of icons SSR never renders
+  icons: { include: ['lucide:egg'] },
   themeConfig: {
     nav,
     sidebar,
@@ -188,11 +212,22 @@ export default defineConfig({
         link: '/home',
         ariaLabel: 'Home social link',
         target: '_self'
+      },
+      {
+        icon: 'lucide:heart',
+        link: '/home',
+        ariaLabel: 'Heart social link'
       }
     ],
     search: {
       provider: 'local',
       options: {
+        miniSearch: {
+          options: {
+            tokenize: (text) =>
+              text.split(/[\n\r\p{Z}\p{Terminal_Punctuation}]+/u)
+          }
+        },
         async _render(src, env, md) {
           const html = await md.renderAsync(src, env)
           if (env.frontmatter?.search === false) return ''

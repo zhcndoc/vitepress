@@ -1,18 +1,24 @@
 <script lang="ts" setup>
 import { useRoute } from 'vitepress'
-import { ref, watch } from 'vue'
+import { useTemplateRef, watch } from 'vue'
+
 import { useData } from '../composables/data'
+
+defineProps<{
+  // the component has two root nodes, so `inert` can't fall through
+  inert?: boolean
+}>()
 
 const { theme } = useData()
 const route = useRoute()
-const backToTop = ref()
+const backToTop = useTemplateRef('backToTop')
 
-watch(() => route.path, () => backToTop.value.focus())
+watch(() => route.path, () => backToTop.value?.focus())
 </script>
 
 <template>
   <span ref="backToTop" tabindex="-1" />
-  <a href="#VPContent" class="VPSkipLink visually-hidden">
+  <a href="#VPContent" class="VPSkipLink visually-hidden" :inert>
     {{ theme.skipToContentLabel || 'Skip to content' }}
   </a>
 </template>
@@ -21,7 +27,7 @@ watch(() => route.path, () => backToTop.value.focus())
 .VPSkipLink {
   position: fixed;
   top: 0.5rem;
-  left: 0.5rem;
+  inset-inline-start: 0.5rem;
   padding: 0.5rem 1rem;
   z-index: 999;
   border-radius: 0.5rem;
@@ -43,7 +49,7 @@ watch(() => route.path, () => backToTop.value.focus())
 @media (min-width: 80rem) {
   .VPSkipLink {
     top: 0.875rem;
-    left: 1rem;
+    inset-inline-start: 1rem;
   }
 }
 </style>

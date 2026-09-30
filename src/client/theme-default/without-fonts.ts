@@ -9,6 +9,7 @@ import './styles/components/vp-doc.css'
 import './styles/components/vp-sponsor.css'
 
 import type { Theme } from 'vitepress'
+
 import VPBadge from './components/VPBadge.vue'
 import Layout from './Layout.vue'
 
@@ -20,6 +21,7 @@ export { default as VPHomeContent } from './components/VPHomeContent.vue'
 export { default as VPHomeFeatures } from './components/VPHomeFeatures.vue'
 export { default as VPHomeHero } from './components/VPHomeHero.vue'
 export { default as VPHomeSponsors } from './components/VPHomeSponsors.vue'
+export { default as VPIcon } from './components/VPIcon.vue'
 export { default as VPImage } from './components/VPImage.vue'
 export { default as VPLink } from './components/VPLink.vue'
 export { default as VPNavBarSearch } from './components/VPNavBarSearch.vue'

@@ -13,12 +13,7 @@ defineProps<{
 <style scoped>
 .VPBackdrop {
   position: fixed;
-  top: 0;
-  /*rtl:ignore*/
-  right: 0;
-  bottom: 0;
-  /*rtl:ignore*/
-  left: 0;
+  inset: 0;
   z-index: var(--vp-z-index-backdrop);
   background: var(--vp-backdrop-bg-color);
   transition: opacity 0.5s;
@@ -30,7 +25,7 @@ defineProps<{
 }
 
 .VPBackdrop.fade-leave-active {
-  transition-duration: .25s;
+  transition-duration: 0.25s;
 }
 
 @media (min-width: 80rem) {

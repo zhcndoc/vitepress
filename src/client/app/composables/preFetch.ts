@@ -2,22 +2,32 @@
 // https://github.com/GoogleChromeLabs/quicklink
 
 import { onMounted, onUnmounted, watch } from 'vue'
+
+import { EXTERNAL_URL_RE } from '../../shared'
 import { useRoute } from '../router'
 import { inBrowser, pathToFile } from '../utils'
 
 const hasFetched = new Set<string>()
 const createLink = () => document.createElement('link')
 
+const getLinkUrl = (link: HTMLAnchorElement | SVGAElement) =>
+  new URL(
+    link.href instanceof SVGAnimatedString ? link.href.animVal : link.href,
+    link.baseURI
+  )
+
 const viaDOM = (url: string) => {
   const link = createLink()
   link.rel = `prefetch`
+  if (EXTERNAL_URL_RE.test(url)) link.crossOrigin = ''
   link.href = url
   document.head.appendChild(link)
 }
 
 const viaXHR = (url: string) => {
   const req = new XMLHttpRequest()
-  req.open('GET', url, (req.withCredentials = true))
+  req.open('GET', url, true)
+  req.withCredentials = !EXTERNAL_URL_RE.test(url)
   req.send()
 }
 
@@ -60,9 +70,9 @@ export function usePrefetch() {
     observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          const link = entry.target as HTMLAnchorElement
+          const link = entry.target as HTMLAnchorElement | SVGAElement
           observer!.unobserve(link)
-          const { pathname } = link
+          const { pathname } = getLinkUrl(link)
           if (!hasFetched.has(pathname)) {
             hasFetched.add(pathname)
             const pageChunkPath = pathToFile(pathname)
@@ -76,12 +86,7 @@ export function usePrefetch() {
       document
         .querySelectorAll<HTMLAnchorElement | SVGAElement>('#app a')
         .forEach((link) => {
-          const { hostname, pathname } = new URL(
-            link.href instanceof SVGAnimatedString
-              ? link.href.animVal
-              : link.href,
-            link.baseURI
-          )
+          const { hostname, pathname } = getLinkUrl(link)
           const extMatch = pathname.match(/\.\w+$/)
           if (extMatch && extMatch[0] !== '.html') {
             return
@@ -90,7 +95,7 @@ export function usePrefetch() {
           if (
             // only prefetch same tab navigation, since a new tab will load
             // the lean js chunk instead.
-            link.target !== '_blank' &&
+            link.getAttribute('target') !== '_blank' &&
             // only prefetch inbound links
             hostname === location.hostname
           ) {

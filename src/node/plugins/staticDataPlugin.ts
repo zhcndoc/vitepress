@@ -1,4 +1,5 @@
 import path from 'node:path'
+
 import pm from 'picomatch'
 import {
   loadConfigFromFile,
@@ -7,6 +8,7 @@ import {
   type Plugin,
   type ViteDevServer
 } from 'vite'
+
 import type { Awaitable } from '../shared'
 import { glob, normalizeGlob, type GlobOptions } from '../utils/glob'
 
@@ -126,6 +128,14 @@ async function loadData(id: string): Promise<string> {
     watch = normalizeGlob(loaderModule.watch, base)
     load = loaderModule.load
     options = loaderModule.options || {}
+
+    // Vite only watches the site root by default. Watch the glob bases too,
+    // so external files (including newly created ones) can trigger HMR.
+    server?.watcher.add(
+      watch
+        .filter((pattern) => !pattern.startsWith('!'))
+        .map((pattern) => pm.scan(pattern).base)
+    )
   }
 
   // load the data

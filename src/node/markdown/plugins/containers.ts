@@ -2,6 +2,7 @@ import { container } from '@mdit/plugin-container'
 import type { MarkdownItAsync } from 'markdown-it-async'
 import type { RenderRule } from 'markdown-it/lib/renderer.mjs'
 import type Token from 'markdown-it/lib/token.mjs'
+
 import type {
   ContainerOptions,
   MarkdownEnv,
@@ -137,7 +138,13 @@ function createOpenRender(
     if (noTitle) return `<div ${renderedAttrs}>\n`
     const title = md.renderInline(
       info || titlesFor(titles, env.localeIndex)[name],
-      { references: env.references }
+      {
+        references: env.references,
+        frontmatter: env.frontmatter,
+        cleanUrls: env.cleanUrls,
+        relativePath: env.relativePath,
+        relativizeUrls: env.relativizeUrls
+      }
     )
     if (name === 'details')
       return `<details ${renderedAttrs}><summary>${title}</summary>\n`

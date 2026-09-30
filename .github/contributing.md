@@ -23,7 +23,7 @@
 
 ## 开发环境设置
 
-你需要安装 [Node.js](https://nodejs.org) v20 或更高版本，以及 [pnpm](https://pnpm.io)。
+你需要安装 [Node.js](https://nodejs.org) v22.22.1 或更高版本，以及 [pnpm](https://pnpm.io)。
 
 克隆仓库后，运行：
 

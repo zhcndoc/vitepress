@@ -1,18 +1,26 @@
 <script setup lang="ts">
 import { useRoute } from 'vitepress'
 import { computed } from 'vue'
+
+import { runtimeBase } from '../../app/utils'
+import { isRelativeBase } from '../../shared'
 import { useData } from '../composables/data'
 import { useLayout } from '../composables/layout'
 import VPDocAside from './VPDocAside.vue'
 import VPDocFooter from './VPDocFooter.vue'
 
-const { theme } = useData()
+const { theme, site } = useData()
 const route = useRoute()
 const { hasSidebar, hasAside, leftAside } = useLayout()
 
-const pageName = computed(() =>
-  route.path.replace(/[./]+/g, '_').replace(/_html$/, '')
-)
+const pageName = computed(() => {
+  // the mount point is unknown at build time, so the class must come from
+  // the site-relative path or ssr and hydration disagree
+  const path = isRelativeBase(site.value.base)
+    ? '/' + route.path.slice(runtimeBase().length)
+    : route.path
+  return path.replace(/[./]+/g, '_').replace(/_html$/, '')
+})
 </script>
 
 <template>
@@ -22,7 +30,7 @@ const pageName = computed(() =>
   >
     <slot name="doc-top" />
     <div class="container">
-      <div v-if="hasAside" class="aside" :class="{'left-aside': leftAside}">
+      <div v-if="hasAside" class="aside" :class="{ 'left-aside': leftAside }">
         <div class="aside-curtain" />
         <div class="aside-container">
           <div class="aside-content">
@@ -120,15 +128,15 @@ const pageName = computed(() =>
   display: none;
   order: 2;
   flex-grow: 1;
-  padding-left: 2rem;
+  padding-inline-start: 2rem;
   width: 100%;
   max-width: 16rem;
 }
 
 .left-aside {
   order: 1;
-  padding-left: unset;
-  padding-right: 2rem;
+  padding-inline-start: unset;
+  padding-inline-end: 2rem;
 }
 
 .aside-container {
@@ -139,6 +147,7 @@ const pageName = computed(() =>
   height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior: contain;
   scrollbar-width: none;
 }
 

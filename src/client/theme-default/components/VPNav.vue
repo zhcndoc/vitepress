@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { inBrowser } from 'vitepress'
 import { computed, provide, watchEffect } from 'vue'
+
 import { useData } from '../composables/data'
 import { navInjectionKey, useNav } from '../composables/nav'
 import VPNavBar from './VPNavBar.vue'
@@ -41,12 +42,10 @@ watchEffect(() => {
 .VPNav {
   position: relative;
   top: var(--vp-layout-top-height, 0px);
-  /*rtl:ignore*/
-  left: 0;
+  inset-inline-start: 0;
   z-index: var(--vp-z-index-nav);
   width: 100%;
   pointer-events: none;
-  transition: background-color 0.5s;
 }
 
 @media (min-width: 60rem) {

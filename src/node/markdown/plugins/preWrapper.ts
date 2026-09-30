@@ -1,4 +1,5 @@
 import type { MarkdownItAsync } from 'markdown-it-async'
+
 import type { MarkdownEnv, MarkdownLocaleOptions } from '../../shared'
 
 export interface Options {
@@ -41,7 +42,7 @@ export function preWrapperPlugin(md: MarkdownItAsync, options: Options) {
       localeButton?.copiedText || options.codeCopyButton.copiedText
 
     return (
-      `<div class="language-${lang}${active}">` +
+      `<div class="language-${lang}${active}" dir="ltr">` +
       `<button title="${tooltipText}" data-copied="${copiedText}" class="copy"></button>` +
       `<span class="lang">${label}</span>` +
       fence(...args) +

@@ -1,4 +1,5 @@
 import path from 'node:path'
+
 import { glob as _glob } from 'tinyglobby'
 import { normalizePath } from 'vite'
 
@@ -32,7 +33,7 @@ export async function glob(
     await _glob(patterns, {
       expandDirectories: false,
       ...options,
-      ignore: ['**/node_modules/**', '**/dist/**', ...(options?.ignore || [])]
+      ignore: ['**/node_modules/**', '**/dist/**'].concat(options?.ignore || [])
     })
   ).sort()
 }

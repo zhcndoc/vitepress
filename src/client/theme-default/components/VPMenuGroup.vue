@@ -1,21 +1,52 @@
-<script lang="ts" setup generic="T extends (DefaultTheme.NavItemComponent | DefaultTheme.NavItemChildren | DefaultTheme.NavItemWithLink)">
+<script
+  lang="ts"
+  setup
+  generic="
+    T extends
+      | DefaultTheme.NavItemComponent
+      | DefaultTheme.NavItemChildren
+      | DefaultTheme.NavItemWithLink
+  "
+>
 import type { DefaultTheme } from 'vitepress/theme'
+import { computed, inject } from 'vue'
+
+import { navScreenInjectionKey } from '../composables/nav'
 import VPMenuLink from './VPMenuLink.vue'
 
-defineProps<{
+const props = defineProps<{
   text?: string
   items: T[]
 }>()
+
+const screen = inject(navScreenInjectionKey, false)
+
+const hasSubGroups = computed(() =>
+  props.items.some((item) => !('link' in item) && !('component' in item))
+)
 </script>
 
 <template>
-  <div class="VPMenuGroup">
+  <li
+    class="VPMenuGroup"
+    :class="{ VPNavScreenMenuGroupSection: screen }"
+  >
     <p v-if="text" class="title">{{ text }}</p>
 
-    <template v-for="item in items" :key="JSON.stringify(item)">
-      <VPMenuLink v-if="'link' in item" :item />
-    </template>
-  </div>
+    <ul :class="{ 'sub-groups': hasSubGroups }">
+      <template v-for="item in items" :key="JSON.stringify(item)">
+        <VPMenuLink v-if="'link' in item" :item />
+        <component
+          v-else-if="'component' in item"
+          :is="item.component"
+          v-bind="item.props"
+          :screen-menu="screen || undefined"
+          :menu="!screen || undefined"
+        />
+        <VPMenuGroup v-else :text="item.text" :items="item.items" />
+      </template>
+    </ul>
+  </li>
 </template>
 
 <style scoped>
@@ -44,5 +75,37 @@ defineProps<{
   color: var(--vp-c-text-2);
   white-space: nowrap;
   transition: color 0.25s;
+}
+
+.VPNavScreen .VPMenuGroup {
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+
+.VPNavScreen .title {
+  padding: 0;
+  line-height: 2.4615385;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  white-space: normal;
+}
+
+.VPMenuGroup > .sub-groups {
+  margin-block: 0.25rem;
+  margin-inline: 0.75rem 0;
+  border-inline-start: 1px solid var(--vp-c-divider);
+  padding-inline-start: 0.25rem;
+}
+
+.VPMenuGroup .VPMenuGroup,
+.VPMenuGroup .VPMenuGroup + .VPMenuGroup {
+  margin: 0;
+  border-top: 0;
+  padding: 0.5rem 0 0;
+}
+
+.VPMenuGroup .VPMenuGroup:first-child {
+  padding-top: 0;
 }
 </style>

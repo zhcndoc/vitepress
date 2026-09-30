@@ -9,9 +9,8 @@ defineProps<{
     <span class="vpi-search" aria-hidden="true"></span>
     <span class="text">{{ text }}</span>
     <span class="keys" aria-hidden="true">
-      <kbd class="key-cmd">&#x2318;</kbd>
-      <kbd class="key-ctrl">Ctrl</kbd>
-      <kbd>K</kbd>
+      <kbd class="key-mod"></kbd>
+      <kbd class="key-k"></kbd>
     </span>
   </button>
 </template>
@@ -27,15 +26,25 @@ defineProps<{
 }
 
 .text,
-.keys,
-:root.mac .key-ctrl,
-:root:not(.mac) .key-cmd {
+.keys {
   display: none;
 }
 
 kbd {
   font-family: inherit;
   font-weight: 500;
+}
+
+.key-mod::before {
+  content: 'Ctrl';
+}
+
+:root.mac .key-mod::before {
+  content: '\2318';
+}
+
+.key-k::before {
+  content: 'K';
 }
 
 @media (min-width: 48rem) {
@@ -58,6 +67,8 @@ kbd {
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    /* the shortcut reads the same way in every direction */
+    direction: ltr;
     padding: 0.25rem 0.375rem;
     border: 1px solid var(--vp-c-divider);
     border-radius: 0.25rem;

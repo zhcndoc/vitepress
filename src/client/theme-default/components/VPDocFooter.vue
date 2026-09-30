@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import { useData } from '../composables/data'
 import { useEditLink } from '../composables/edit-link'
 import { usePrevNext } from '../composables/prev-next'
@@ -60,7 +61,7 @@ const showFooter = computed(
             class="desc"
             v-html="theme.docFooter?.prev || 'Previous page'"
           ></span>
-          <span class="title" v-html="control.prev.text"></span>
+          <span class="title"><bdi v-html="control.prev.text" /></span>
         </VPLink>
       </div>
       <div class="pager">
@@ -75,7 +76,7 @@ const showFooter = computed(
             class="desc"
             v-html="theme.docFooter?.next || 'Next page'"
           ></span>
-          <span class="title" v-html="control.next.text"></span>
+          <span class="title"><bdi v-html="control.next.text" /></span>
         </VPLink>
       </div>
     </nav>
@@ -116,7 +117,7 @@ const showFooter = computed(
 }
 
 .edit-link-icon {
-  margin-right: 0.5rem;
+  margin-inline-end: 0.5rem;
 }
 
 .prev-next {
@@ -148,8 +149,8 @@ const showFooter = computed(
 }
 
 .pager-link.next {
-  margin-left: auto;
-  text-align: right;
+  margin-inline-start: auto;
+  text-align: end;
 }
 
 .desc {

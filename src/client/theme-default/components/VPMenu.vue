@@ -1,7 +1,8 @@
 <script lang="ts" setup generic="T extends DefaultTheme.NavItem">
 import type { DefaultTheme } from 'vitepress/theme'
-import VPMenuLink from './VPMenuLink.vue'
+
 import VPMenuGroup from './VPMenuGroup.vue'
+import VPMenuLink from './VPMenuLink.vue'
 
 defineProps<{
   items?: T[]
@@ -11,15 +12,16 @@ defineProps<{
 <template>
   <div class="VPMenu">
     <ul v-if="items" class="items">
-      <li v-for="item in items" :key="JSON.stringify(item)">
+      <template v-for="item in items" :key="JSON.stringify(item)">
         <VPMenuLink v-if="'link' in item" :item />
         <component
           v-else-if="'component' in item"
           :is="item.component"
           v-bind="item.props"
+          menu
         />
         <VPMenuGroup v-else :text="item.text" :items="item.items" />
-      </li>
+      </template>
     </ul>
 
     <slot />
@@ -63,16 +65,4 @@ defineProps<{
   white-space: nowrap;
 }
 
-.VPMenu :deep(.label) {
-  flex-grow: 1;
-  line-height: 2.3333333;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--vp-c-text-2);
-  transition: color 0.5s;
-}
-
-.VPMenu :deep(.action) {
-  padding-left: 1.5rem;
-}
 </style>

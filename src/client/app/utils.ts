@@ -1,20 +1,52 @@
 import { tryOnUnmounted } from '@vueuse/core'
-import { h, onMounted, shallowRef, type AsyncComponentLoader } from 'vue'
+import {
+  h,
+  isVNode,
+  onMounted,
+  shallowRef,
+  type AsyncComponentLoader,
+  type SetupContext
+} from 'vue'
+
 import {
   EXTERNAL_URL_RE,
+  RELATIVE_BASE_SENTINEL,
   inBrowser,
+  isRelativeBase,
+  joinPath,
+  pageChunkPath,
   sanitizeFileName,
   type Awaitable
 } from '../shared'
 import { siteDataRef } from './data'
 
 export { escapeHtml as _escapeHtml, inBrowser } from '../shared'
+export { joinPath } from '../shared'
+
+let resolvedBase: string | undefined
 
 /**
- * Join two paths by resolving the slash collision.
+ * Runtime base path used by the app.
+ *
+ * Usually this is the configured site base.
+ *
+ * For a relative base (`'./'`), the mount point is unknown at build time, so:
+ * - SSR: uses `RELATIVE_BASE_SENTINEL` (for per-page URL relativization)
+ * - dev browser: uses `'/'` (dev server always mounts at root)
+ * - prod browser: resolves from the page's `__VP_SITE_ROOT__`
  */
-export function joinPath(base: string, path: string) {
-  return `${base}${path}`.replace(/\/+/g, '/')
+export function runtimeBase(): string {
+  if (resolvedBase === undefined) {
+    const base = siteDataRef.value.base
+    if (!isRelativeBase(base)) return (resolvedBase = base)
+    if (!inBrowser) return (resolvedBase = RELATIVE_BASE_SENTINEL)
+    if (import.meta.env.DEV) return (resolvedBase = '/')
+    const root = (window as any).__VP_SITE_ROOT__
+    resolvedBase = root
+      ? decodeURIComponent(new URL(root, location.href).pathname)
+      : '/'
+  }
+  return resolvedBase
 }
 
 /**
@@ -23,7 +55,7 @@ export function joinPath(base: string, path: string) {
 export function withBase(path: string) {
   return EXTERNAL_URL_RE.test(path) || !path.startsWith('/')
     ? path
-    : joinPath(siteDataRef.value.base, path)
+    : joinPath(runtimeBase(), path)
 }
 
 /**
@@ -41,7 +73,11 @@ export function pathToFile(path: string) {
     // the path conversion scheme.
     // /foo/bar.html -> ./foo_bar.md
     if (inBrowser) {
-      const base = import.meta.env.BASE_URL
+      const base = runtimeBase()
+      // the site root may arrive without its trailing slash; anything
+      // outside the base has no page chunk at all
+      if (pagePath + '/' === base) pagePath = base
+      if (!pagePath.startsWith(base)) return null
       pagePath =
         sanitizeFileName(
           pagePath.slice(base.length).replace(/\//g, '_') || 'index'
@@ -56,7 +92,7 @@ export function pathToFile(path: string) {
         pageHash = __VP_HASH_MAP__[pagePath.toLowerCase()]
       }
       if (!pageHash) return null
-      pagePath = `${base}${__ASSETS_DIR__}/${pagePath}.${pageHash}.js`
+      pagePath = `${__ASSETS_BASE__ || base}${__ASSETS_DIR__}/${pageChunkPath(pagePath, pageHash)}`
     } else {
       // ssr build uses much simpler name mapping
       pagePath = `./${sanitizeFileName(
@@ -87,7 +123,7 @@ export function defineClientComponent(
   cb?: () => Awaitable<void>
 ) {
   return {
-    setup() {
+    setup(_: unknown, { slots }: SetupContext) {
       const comp = shallowRef()
       onMounted(async () => {
         let res = await loader()
@@ -98,7 +134,23 @@ export function defineClientComponent(
         comp.value = res
         await cb?.()
       })
-      return () => (comp.value ? h(comp.value, ...(args ?? [])) : null)
+      return () => {
+        if (!comp.value) return null
+
+        const props = args?.[0]
+        // Forward slots unless args already supply children in an h() overload.
+        if (
+          (!args || args.length < 2) &&
+          (props == null ||
+            (typeof props === 'object' &&
+              !Array.isArray(props) &&
+              !isVNode(props)))
+        ) {
+          return h(comp.value, props, slots)
+        }
+
+        return h(comp.value, ...(args ?? []))
+      }
     }
   }
 }

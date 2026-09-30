@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import { useData } from '../composables/data'
 import { useLangs } from '../composables/langs'
 import { useLayout } from '../composables/layout'
@@ -27,6 +28,14 @@ const target = computed(() =>
     ? undefined
     : theme.value.logoLink?.target
 )
+
+// plain-text form of the rendered title (`siteTitle` may contain HTML),
+// surfaced as a native tooltip since the sidebar column truncates it
+const textTitle = computed(() => {
+  if (theme.value.siteTitle === false) return undefined
+  const raw = theme.value.siteTitle ?? site.value.title
+  return raw.replace(/<[^>]+>/g, '').trim() || undefined
+})
 </script>
 
 <template>
@@ -36,10 +45,11 @@ const target = computed(() =>
       :href="link ?? normalizeLink(currentLang.link)"
       :rel
       :target
+      :title="textTitle"
     >
       <slot name="nav-bar-title-before" />
       <VPImage v-if="theme.logo" class="logo" :image="theme.logo" />
-      <span v-if="theme.siteTitle" v-html="theme.siteTitle"></span>
+      <span v-if="theme.siteTitle" dir="auto" v-html="theme.siteTitle"></span>
       <span v-else-if="theme.siteTitle === undefined">{{ site.title }}</span>
       <slot name="nav-bar-title-after" />
     </a>
@@ -50,7 +60,6 @@ const target = computed(() =>
 .title {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid transparent;
   width: 100%;
   height: var(--vp-nav-height);
   font-size: 1rem;
@@ -59,18 +68,28 @@ const target = computed(() =>
   transition: opacity 0.25s;
 }
 
+/* wherever the bar runs out of room, the title text gives way first */
+.title > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media (min-width: 60rem) {
   .title {
     flex-shrink: 0;
   }
 
-  .VPNavBarTitle.has-sidebar .title {
-    border-bottom-color: var(--vp-c-divider);
+  /* the sidebar column has a fixed width — truncate at the divider
+     segment's edge (2rem inset from the column); the outer column box
+     keeps its full reserved width */
+  .VPNavBarTitle.has-sidebar {
+    max-width: calc(var(--vp-sidebar-width) - 4rem);
   }
 }
 
 :deep(.logo) {
-  margin-right: 0.5rem;
+  flex: none;
+  margin-inline-end: 0.5rem;
   height: var(--vp-nav-logo-height);
 }
 </style>

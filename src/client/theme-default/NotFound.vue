@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { withBase } from 'vitepress'
+
 import { useData } from './composables/data'
 import { useLangs } from './composables/langs'
 
@@ -10,13 +11,15 @@ const { currentLang } = useLangs()
 <template>
   <div class="NotFound">
     <p class="code">{{ theme.notFound?.code ?? '404' }}</p>
-    <h1 class="title">{{ theme.notFound?.title ?? 'PAGE NOT FOUND' }}</h1>
+    <h1 class="title">
+      <bdi>{{ theme.notFound?.title ?? 'PAGE NOT FOUND' }}</bdi>
+    </h1>
     <div class="divider" />
     <blockquote class="quote">
-      {{
+      <bdi>{{
         theme.notFound?.quote ??
         "But if you don't change your direction, and if you keep looking, you may end up where you are heading."
-      }}
+      }}</bdi>
     </blockquote>
 
     <div class="action">
@@ -25,7 +28,7 @@ const { currentLang } = useLangs()
         :href="withBase(theme.notFound?.link ?? currentLang.link)"
         :aria-label="theme.notFound?.linkLabel ?? 'go to home'"
       >
-        {{ theme.notFound?.linkText ?? 'Take me home' }}
+        <bdi>{{ theme.notFound?.linkText ?? 'Take me home' }}</bdi>
       </a>
     </div>
   </div>
@@ -84,9 +87,7 @@ const { currentLang } = useLangs()
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--vp-c-brand-1);
-  transition:
-    border-color 0.25s,
-    color 0.25s;
+  transition: border-color 0.25s, color 0.25s;
 }
 
 .link:hover {

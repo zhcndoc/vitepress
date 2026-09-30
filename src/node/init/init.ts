@@ -1,3 +1,8 @@
+import fs from 'node:fs'
+import { mkdir, writeFile } from 'node:fs/promises'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
 import {
   cancel,
   confirm,
@@ -7,20 +12,20 @@ import {
   select,
   text
 } from '@clack/prompts'
-import template from 'lodash.template'
-import fs from 'node:fs'
-import { mkdir, writeFile } from 'node:fs/promises'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { Eta } from 'eta'
 import c from 'picocolors'
+
 import { slash } from '../shared'
 import { readFile } from '../utils/fs'
 
-export enum ScaffoldThemeType {
-  Default = 'default theme',
-  DefaultCustom = 'default theme + customization',
-  Custom = 'custom theme'
-}
+export const ScaffoldThemeType = {
+  Default: 'default theme',
+  DefaultCustom: 'default theme + customization',
+  Custom: 'custom theme'
+} as const
+
+export type ScaffoldThemeType =
+  (typeof ScaffoldThemeType)[keyof typeof ScaffoldThemeType]
 
 export interface ScaffoldOptions {
   root?: string
@@ -185,6 +190,12 @@ export async function scaffold({
 
   const useMjs = userPkg.type !== 'module'
 
+  const eta = new Eta({
+    useWith: true,
+    autoEscape: false,
+    autoTrim: false
+  })
+
   const renderFile = async (file: string) => {
     const filePath = path.resolve(templateDir, file)
     let targetPath = path.resolve(resolvedRoot, file)
@@ -200,7 +211,7 @@ export async function scaffold({
     }
 
     const content = await readFile(filePath)
-    const compiled = template(content)(data)
+    const compiled = eta.renderString(content, data)
 
     await mkdir(path.dirname(targetPath), { recursive: true })
     await writeFile(targetPath, compiled)

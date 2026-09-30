@@ -1,8 +1,5 @@
-import { createRequire } from 'node:module'
 import { defineAdditionalConfig, type DefaultTheme } from 'vitepress'
-
-const require = createRequire(import.meta.url)
-const pkg = require('vitepress/package.json')
+import pkg from 'vitepress/package.json' with { type: 'json' }
 
 export default defineAdditionalConfig({
   lang: 'zh-CN',
@@ -23,7 +20,8 @@ export default defineAdditionalConfig({
 
     footer: {
       message: `<a style="text-decoration: none;" target="_blank" href="https://www.zhcndoc.com">简中文档</a> | <a style="text-decoration: none;" rel="nofollow" target="_blank" href="https://beian.miit.gov.cn">沪ICP备2024070610号-3</a>`,
-      copyright: 'Copyright © 2019-present Evan You. Released under the MIT License.'
+      copyright:
+        'Copyright © 2019-present Evan You. Released under the MIT License.'
     }
   }
 })

@@ -1,5 +1,6 @@
-import { exactRegex } from '@rolldown/pluginutils'
 import path from 'node:path'
+
+import { exactRegex } from '@rolldown/pluginutils'
 import c from 'picocolors'
 import {
   mergeConfig,
@@ -11,6 +12,7 @@ import {
   type Rolldown,
   type UserConfig
 } from 'vite'
+
 import {
   APP_PATH,
   DEFAULT_THEME_PATH,
@@ -25,12 +27,19 @@ import {
   createMarkdownToVueRenderFn,
   type MarkdownCompileResult
 } from './markdownToVue'
+import { assetsBasePlugin } from './plugins/assetsBasePlugin'
+import { iconsPlugin } from './plugins/iconsPlugin'
 import { dynamicRoutesPlugin } from './plugins/dynamicRoutesPlugin'
 import { localSearchPlugin } from './plugins/localSearchPlugin'
 import { rewritesPlugin } from './plugins/rewritesPlugin'
 import { staticDataPlugin } from './plugins/staticDataPlugin'
 import { webFontsPlugin } from './plugins/webFontsPlugin'
-import { slash, type PageDataPayload } from './shared'
+import {
+  isRelativeBase,
+  resolveSiteDataByRoute,
+  slash,
+  type PageDataPayload
+} from './shared'
 import { deserializeFunctions, serializeFunctions } from './utils/fnSerialize'
 import { cacheAllGitTimestamps } from './utils/getGitTimestamp'
 
@@ -127,7 +136,9 @@ export async function createVitePressPlugin(
       markdownToVue = await createMarkdownToVueRenderFn(
         srcDir,
         markdown ?? {},
-        config.base,
+        // the site base, not the vite base: the ssr build runs under the
+        // sentinel, and one md singleton serves both builds
+        site.base,
         lastUpdated ?? false,
         cleanUrls ?? false,
         siteConfig
@@ -146,6 +157,7 @@ export async function createVitePressPlugin(
             !!site.themeConfig?.algolia, // legacy
           __CARBON__: !!site.themeConfig?.carbonAds,
           __ASSETS_DIR__: JSON.stringify(siteConfig.assetsDir),
+          __ASSETS_BASE__: JSON.stringify(siteConfig.assetsBase ?? ''),
           __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: !!process.env.DEBUG
         },
         optimizeDeps: {
@@ -154,7 +166,7 @@ export async function createVitePressPlugin(
             'vue',
             'vitepress > @vue/devtools-api',
             'vitepress > @vueuse/core'
-          ].filter((d) => d != null),
+          ],
           exclude: ['@docsearch/js', '@docsearch/sidepanel-js', 'vitepress']
         },
         server: {
@@ -200,8 +212,13 @@ export async function createVitePressPlugin(
             return `export default window.__VP_SITE_DATA__`
           }
         }
-        data = serializeFunctions(data)
-        return `${deserializeFunctions};export default deserializeFunctions(JSON.parse(${JSON.stringify(JSON.stringify(data))}))`
+        const fns: string[] = []
+        const dataStr = JSON.stringify(
+          JSON.stringify(serializeFunctions(data, fns))
+        )
+        return fns.length
+          ? `${deserializeFunctions};export default deserializeFunctions(JSON.parse(${dataStr}),[${fns.join(',')}])`
+          : `export default JSON.parse(${dataStr})`
       }
     },
 
@@ -295,9 +312,31 @@ export async function createVitePressPlugin(
           if (url?.endsWith('.html')) {
             res.statusCode = 200
             res.setHeader('Content-Type', 'text/html')
+            // the shell of the requested page's locale, so the first paint
+            // already has its language and direction. req.url is the fallback
+            // page by now; the original request still names the actual one,
+            // served at the root when the base is relative
+            const base = isRelativeBase(site.base) ? '/' : site.base
+            const page = cleanUrl(req.originalUrl || url).slice(base.length)
+            let { lang, dir } = site
+            try {
+              const source =
+                decodeURI(page)
+                  .replace(/(^|\/)$/, '$1index')
+                  .replace(/\.html$/, '') + '.md'
+              // a bare locale root (/fa) counts as its directory
+              const localePath = /\.\w+$|\/$/.test(page) ? page : page + '/'
+              ;({ lang, dir } = resolveSiteDataByRoute(
+                site,
+                localePath,
+                siteConfig.rewrites.inv[source] || source
+              ))
+            } catch {
+              // malformed percent-encoding: keep the site-level values
+            }
             let html = `\
 <!DOCTYPE html>
-<html>
+<html lang="${lang}" dir="${dir}">
   <head>
     <title></title>
     <meta charset="utf-8">
@@ -353,9 +392,14 @@ export async function createVitePressPlugin(
         for (const name in bundle) {
           const chunk = bundle[name]
           if (isPageChunk(chunk)) {
-            // record page -> hash relations
+            // record page -> hash relations, keeping the subdirectory the
+            // chunk was sharded into so the client can locate it
             const hash = chunk.fileName.match(hashRE)![1]
-            pageToHashMap![chunk.name.toLowerCase()] = hash
+            const dir = path.posix.dirname(
+              path.posix.relative(siteConfig.assetsDir, chunk.fileName)
+            )
+            pageToHashMap![chunk.name.toLowerCase()] =
+              dir === '.' ? hash : `${dir}/${hash}`
 
             // inject another chunk with the content stripped
             this.emitFile({
@@ -450,6 +494,9 @@ export async function createVitePressPlugin(
     hmrFix,
     webFontsPlugin(siteConfig.useWebFonts),
     ...(userViteConfig?.plugins || []),
+    // must stay after the user plugins; see assetsBasePlugin
+    ...(siteConfig.assetsBase ? [assetsBasePlugin(siteConfig)] : []),
+    iconsPlugin(siteConfig),
     await localSearchPlugin(siteConfig),
     staticDataPlugin,
     await dynamicRoutesPlugin(siteConfig)

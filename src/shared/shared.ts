@@ -30,6 +30,53 @@ export type {
 export const EXTERNAL_URL_RE = /^(?:[a-z]+:|\/\/)/i
 export const APPEARANCE_KEY = 'vitepress-theme-appearance'
 
+// iconify's icon/collection name grammar
+const iconNameRE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+
+/**
+ * Parses a fully qualified `collection:name` icon name, corresponding to
+ * the `vpi-<collection>-<name>` class. Returns null for anything else,
+ * keeping malformed input out of generated selectors and class attributes.
+ */
+export function parseIconName(
+  name: string
+): { collection: string; icon: string } | null {
+  const colon = name.indexOf(':')
+  if (colon === -1) return null
+  const collection = name.slice(0, colon)
+  const icon = name.slice(colon + 1)
+  if (!iconNameRE.test(collection) || !iconNameRE.test(icon)) return null
+  return { collection, icon }
+}
+
+/**
+ * Placeholder prepended to SSR-emitted URLs when base is relative, later
+ * replaced with each page's `../` prefix back to the site root.
+ */
+export const RELATIVE_BASE_SENTINEL = '/__VP_BASE__/'
+
+export function isRelativeBase(base: string): boolean {
+  return base === './'
+}
+
+/**
+ * The ../-prefix that leads from `relativePath`'s directory back to the
+ * site root ('./' for root-level pages).
+ */
+export function relativePathToRoot(relativePath: string): string {
+  const depth = relativePath.split('/').length - 1
+  return depth ? '../'.repeat(depth) : './'
+}
+
+/**
+ * Join two paths, collapsing slash collisions but keeping the `//` that
+ * follows a protocol.
+ */
+export function joinPath(base: string, path: string): string {
+  const protocol = /^(?:[a-z]+:)?\/\//i.exec(base)?.[0] ?? ''
+  return protocol + `${base.slice(protocol.length)}${path}`.replace(/\/+/g, '/')
+}
+
 export const VP_SOURCE_KEY = '[VP_SOURCE]'
 const UnpackStackView = Symbol('stack-view:unpack')
 
@@ -113,7 +160,8 @@ export function getLocaleForPath(
 }
 
 /**
- * this merges the locales data to the main data by the route
+ * Resolves the site data for a route, layering the matched locale and
+ * additional configs over the root config.
  */
 export function resolveSiteDataByRoute(
   siteData: SiteData,
@@ -122,11 +170,11 @@ export function resolveSiteDataByRoute(
 ): SiteData {
   const localeIndex = getLocaleForPath(siteData, relativePath)
   const { label, link, markdown, ...localeConfig } =
-    siteData.locales[localeIndex] ?? {}
+    siteData.locales[localeIndex] ?? ({} as (typeof siteData.locales)[string])
   Object.assign(localeConfig, { localeIndex })
 
-  // additional configs are colocated with sources, so resolve them by the
-  // source path (filePath) rather than the rewritten one
+  // additional configs are colocated with sources — resolve them by source
+  // path rather than the rewritten one
   const additionalConfigs = resolveAdditionalConfig(
     siteData,
     filePath || relativePath
@@ -165,7 +213,7 @@ export function createTitle(siteData: SiteData, pageData: PageData): string {
   const template = pageData.titleTemplate ?? siteData.titleTemplate
 
   if (typeof template === 'string' && template.includes(':title')) {
-    return template.replace(/:title/g, title)
+    return template.replace(/:title/g, () => title)
   }
 
   const templateString = createTitleTemplate(siteData.title, template)
@@ -198,31 +246,39 @@ function createTitleTemplate(
 
 export function mergeHead(...headArrays: HeadConfig[][]): HeadConfig[] {
   const merged: HeadConfig[] = []
-  const metaKeyMap = new Map<string, number>()
+  const keyMap = new Map<string, number>()
 
   for (const current of headArrays) {
     for (const tag of current) {
-      const [type, attrs] = tag
-      const keyAttr = Object.entries(attrs)[0]
+      const key = getHeadKey(tag)
 
-      if (type !== 'meta' || !keyAttr) {
+      if (key == null) {
         merged.push(tag)
         continue
       }
 
-      const key = `${keyAttr[0]}=${keyAttr[1]}`
-      const existingIndex = metaKeyMap.get(key)
+      const existingIndex = keyMap.get(key)
 
       if (existingIndex != null) {
         merged[existingIndex] = tag // replace existing tag
       } else {
-        metaKeyMap.set(key, merged.length)
+        keyMap.set(key, merged.length)
         merged.push(tag)
       }
     }
   }
 
   return merged
+}
+
+// any element is keyed by its `id`; a meta tag without one is keyed by its
+// first attribute other than `content` (e.g. `name`, `property`, `http-equiv`)
+function getHeadKey([type, attrs]: HeadConfig): string | undefined {
+  if (attrs.id) return `id=${attrs.id}`
+  if (type !== 'meta') return
+  for (const name in attrs) {
+    if (name !== 'content') return `${name}=${attrs[name]}`
+  }
 }
 
 export function sanitizeFileName(name: string): string {
@@ -238,6 +294,21 @@ export function sanitizeFileName(name: string): string {
   )
 }
 
+/**
+ * Output path of a page's client chunk relative to `assetsDir`, from its hash
+ * map entry. The entry is the chunk's hash, prefixed with the subdirectory the
+ * build put the chunk in when `assetsShards` is set (`<shard>/<hash>`), so the
+ * client never has to guess the layout.
+ */
+export function pageChunkPath(
+  pageName: string,
+  hashEntry: string,
+  ext = '.js'
+): string {
+  const dir = hashEntry.lastIndexOf('/') + 1
+  return `${hashEntry.slice(0, dir)}${pageName}.${hashEntry.slice(dir)}${ext}`
+}
+
 export function slash(p: string): string {
   return p.replace(/\\/g, '/')
 }
@@ -245,7 +316,7 @@ export function slash(p: string): string {
 export function treatAsHtml(filename: string): boolean {
   if (KNOWN_EXTENSIONS.size === 0) {
     const extraExts =
-      (typeof process === 'object' && process.env?.VITE_EXTRA_EXTENSIONS) ||
+      (globalThis as any).process?.env?.VITE_EXTRA_EXTENSIONS ||
       (import.meta as any).env?.VITE_EXTRA_EXTENSIONS ||
       ''
 
@@ -292,7 +363,7 @@ function resolveAdditionalConfig(
   if (typeof additionalConfig === 'function')
     return additionalConfig(path) ?? []
 
-  const configs: AdditionalConfig[] = []
+  const configs: (AdditionalConfig | undefined)[] = []
   const segments = path.split('/').slice(0, -1) // remove file name
 
   while (segments.length) {
@@ -305,7 +376,7 @@ function resolveAdditionalConfig(
   return configs.filter((config) => config !== undefined)
 }
 
-// This helps users to understand which configuration files are active
+// logs the config layers active for a page (dev only)
 function reportConfigLayers(path: string, layers: Partial<SiteData>[]) {
   const summaryTitle = `Config Layers for ${path}:`
 
@@ -321,9 +392,8 @@ function reportConfigLayers(path: string, layers: Partial<SiteData>[]) {
 }
 
 /**
- * Creates a deep, merged view of multiple objects without mutating originals.
- * Returns a readonly proxy behaving like a merged object of the input objects.
- * Layers are merged in descending precedence, i.e. earlier layer is on top.
+ * Creates a readonly proxy behaving like a deep merge of the given layers,
+ * without mutating them. Earlier layers take precedence.
  */
 export function stackView<T extends ObjectType>(..._layers: Partial<T>[]): T {
   const layers = _layers.filter((layer) => isObject(layer))

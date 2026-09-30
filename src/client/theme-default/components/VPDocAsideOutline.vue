@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useTemplateRef } from 'vue'
+
 import { useData } from '../composables/data'
 import { useLayout } from '../composables/layout'
 import { resolveTitle, useActiveAnchor } from '../composables/outline'
@@ -7,8 +8,8 @@ import VPDocOutlineItem from './VPDocOutlineItem.vue'
 
 const { theme } = useData()
 
-const container = ref()
-const marker = ref()
+const container = useTemplateRef('container')
+const marker = useTemplateRef('marker')
 
 const { headers, hasLocalNav } = useLayout()
 
@@ -50,8 +51,8 @@ useActiveAnchor(container, marker)
 
 .content {
   position: relative;
-  border-left: 1px solid var(--vp-c-divider);
-  padding-left: 1rem;
+  border-inline-start: 1px solid var(--vp-c-divider);
+  padding-inline-start: 1rem;
   font-size: 0.8125rem;
   font-weight: 500;
 }
@@ -59,17 +60,14 @@ useActiveAnchor(container, marker)
 .outline-marker {
   position: absolute;
   top: 2rem;
-  left: -1px;
+  inset-inline-start: -1px;
   z-index: 0;
   opacity: 0;
   width: 2px;
   border-radius: 2px;
   height: 1.125rem;
   background-color: var(--vp-c-brand-1);
-  transition:
-    top 0.25s cubic-bezier(0, 1, 0.5, 1),
-    background-color 0.5s,
-    opacity 0.25s;
+  transition: top 0.25s cubic-bezier(0, 1, 0.5, 1), background-color 0.5s, opacity 0.25s;
 }
 
 .outline-title {

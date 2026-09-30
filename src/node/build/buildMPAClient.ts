@@ -1,4 +1,5 @@
 import { build, type Rolldown } from 'vite'
+
 import type { SiteConfig } from '..'
 
 const virtualEntry = 'client.js'
@@ -16,6 +17,14 @@ export async function buildMPAClient(
     cacheDir: config.cacheDir,
     base: config.site.base,
     logLevel: config.vite?.logLevel ?? 'warn',
+    ...(config.assetsBase
+      ? {
+          experimental: {
+            renderBuiltUrl: (filename, ctx) =>
+              ctx.type === 'asset' ? config.assetsBase! + filename : undefined
+          }
+        }
+      : {}),
     build: {
       emptyOutDir: false,
       outDir: config.outDir,

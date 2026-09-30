@@ -1,9 +1,11 @@
-import { resolveTitleFromToken } from '@mdit-vue/shared'
-import { LRUCache } from 'lru-cache'
 import { hash } from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
+
+import { resolveTitleFromToken } from '@mdit-vue/shared'
+import { LRUCache } from 'lru-cache'
 import { createDebug } from 'obug'
+
 import type { SiteConfig } from './config'
 import {
   createMarkdownRenderer,
@@ -11,6 +13,7 @@ import {
   type MarkdownOptions,
   type MarkdownRenderer
 } from './markdown/markdown'
+import { findStaleEagerInterpolations } from './markdown/plugins/eagerFrontmatterInterpolation'
 import { getPageDataTransformer } from './plugins/dynamicRoutesPlugin'
 import {
   EXTERNAL_URL_RE,
@@ -56,7 +59,9 @@ export function clearCache(relativePath?: string) {
     return
   }
 
-  cache.find((_, key) => key.endsWith(`:${relativePath}`) && cache.delete(key))
+  for (const key of cache.keys()) {
+    if (key.endsWith(`:${relativePath}`)) cache.delete(key)
+  }
 }
 
 function normalizeDriveLetter(file: string) {
@@ -120,7 +125,7 @@ export async function createMarkdownToVueRenderFn(
     const fileOrig = dynamicRoute?.[0] || file
     const transformPageData = [
       siteConfig?.transformPageData,
-      getPageDataTransformer(dynamicRoute?.[1]!)
+      getPageDataTransformer(dynamicRoute?.[1])
     ].filter((fn) => fn != null)
 
     file = rewrites.get(normalizeDriveLetter(file)) || file
@@ -156,6 +161,7 @@ export async function createMarkdownToVueRenderFn(
       path: file,
       relativePath,
       cleanUrls,
+      relativizeUrls: true,
       includes: [],
       realPath: fileOrig,
       localeIndex
@@ -281,6 +287,24 @@ export async function createMarkdownToVueRenderFn(
       }
     }
 
+    // interpolations were inlined from the frontmatter as rendered - values
+    // rewritten by `transformPageData` afterwards would silently diverge
+    if (transformPageData.length && env.eagerInterpolations?.length) {
+      const stale = findStaleEagerInterpolations(
+        env.eagerInterpolations,
+        (pageData.frontmatter ?? {}) as Record<string, unknown>
+      )
+      if (stale.length) {
+        siteConfig?.logger?.warn(
+          `${relativePath}: ${stale.map((e) => `{{ ${e} }}`).join(', ')} ` +
+            `resolved while rendering markdown, but transformPageData changed ` +
+            `the underlying frontmatter afterwards - the rendered content ` +
+            `keeps the old value. Avoid rewriting interpolated keys, or set ` +
+            `markdown.eagerFrontmatterInterpolation: false.`
+        )
+      }
+    }
+
     const vueSrc = [
       ...injectPageDataCode(
         sfcBlocks?.scripts.map((item) => item.content) ?? [],
@@ -300,9 +324,10 @@ export async function createMarkdownToVueRenderFn(
 }
 
 function injectPageDataCode(tags: string[], data: PageData) {
+  // Keep HTML closing tags in page data from terminating the SFC script.
   const code = `\nexport const __pageData = JSON.parse(${JSON.stringify(
     JSON.stringify(data)
-  )})`
+  ).replace(/</g, '\\u003c')})`
 
   const existingScriptIndex = tags.findIndex((tag) => {
     return (
@@ -322,7 +347,8 @@ function injectPageDataCode(tags: string[], data: PageData) {
       defaultExportRE.test(tagSrc) || namedDefaultExportRE.test(tagSrc)
     tags[existingScriptIndex] = tagSrc.replace(
       scriptRE,
-      code +
+      () =>
+        code +
         (hasDefaultExport
           ? ``
           : `\nexport default {name:${JSON.stringify(data.relativePath)}}`) +

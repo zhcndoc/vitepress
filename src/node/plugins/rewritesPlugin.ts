@@ -1,5 +1,7 @@
 import { compile, match } from 'path-to-regexp'
 import type { Plugin } from 'vite'
+
+import { isRelativeBase } from '../shared'
 import type { SiteConfig, UserConfig } from '../siteConfig'
 
 export function resolveRewrites(
@@ -50,17 +52,19 @@ export const rewritesPlugin = (config: SiteConfig): Plugin => {
   return {
     name: 'vitepress:rewrites',
     configureServer(server) {
+      // dev always serves at the root when the base is relative
+      const base = isRelativeBase(config.site.base) ? '/' : config.site.base
       // dev rewrite
       server.middlewares.use((req, _res, next) => {
         if (req.url) {
           const page = decodeURI(req.url)
             .replace(/[?#].*$/, '')
-            .slice(config.site.base.length)
+            .slice(base.length)
 
           if (config.rewrites.inv[page]) {
             req.url = req.url.replace(
               encodeURI(page),
-              encodeURI(config.rewrites.inv[page]!)
+              encodeURI(config.rewrites.inv[page])
             )
           }
         }

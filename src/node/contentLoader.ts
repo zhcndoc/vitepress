@@ -1,14 +1,16 @@
-import matter from 'gray-matter'
 import { stat } from 'node:fs/promises'
 import path from 'node:path'
+
+import matter from 'gray-matter'
 import pMap from 'p-map'
 import { normalizePath } from 'vite'
+
 import type { SiteConfig } from './config'
 import {
   createMarkdownRenderer,
   mergeMarkdownLocales
 } from './markdown/markdown'
-import type { Awaitable, MarkdownEnv } from './shared'
+import { getLocaleForPath, type Awaitable, type MarkdownEnv } from './shared'
 import { readTextFile } from './utils/fs'
 import { glob, normalizeGlob, type GlobOptions } from './utils/glob'
 
@@ -147,8 +149,12 @@ export function createContentLoader<T = ContentData[]>(
           const env: MarkdownEnv = {
             path: file,
             relativePath,
+            localeIndex: getLocaleForPath(config.site, relativePath),
             cleanUrls: !!config.cleanUrls,
-            realPath: file
+            realPath: file,
+            // excerpts are rendered on their own, without the frontmatter
+            // block - provide the data so `$frontmatter` still resolves
+            frontmatter
           }
 
           const html = options.render

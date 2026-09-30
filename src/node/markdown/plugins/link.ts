@@ -2,16 +2,21 @@
 // 1. adding target="_blank" to external links
 // 2. normalize internal links to end with `.html`
 
-import type { MarkdownItAsync } from 'markdown-it-async'
 import { URL } from 'node:url'
+
+import type { MarkdownItAsync } from 'markdown-it-async'
+
 import {
   EXTERNAL_URL_RE,
   isExternal,
+  isRelativeBase,
+  joinPath,
+  relativePathToRoot,
   treatAsHtml,
   type MarkdownEnv
 } from '../../shared'
 
-const indexRE = /(^|.*\/)index.md(#?.*)$/i
+const indexRE = /(^|.*\/)index\.md$/i
 
 export const linkPlugin = (
   md: MarkdownItAsync,
@@ -79,7 +84,15 @@ export const linkPlugin = (
 
         // append base to internal (non-relative) urls
         if (hrefAttr[1].startsWith('/')) {
-          hrefAttr[1] = `${base}${hrefAttr[1]}`.replace(/\/+/g, '/')
+          if (isRelativeBase(base)) {
+            // page-relative, so the same html works at any mount point
+            if (env.relativizeUrls && env.relativePath != null) {
+              hrefAttr[1] =
+                relativePathToRoot(env.relativePath) + hrefAttr[1].slice(1)
+            }
+          } else {
+            hrefAttr[1] = joinPath(base, hrefAttr[1])
+          }
         }
       }
       if (frag) {
@@ -96,12 +109,14 @@ export const linkPlugin = (
   ) {
     let url = hrefAttr[1]
 
-    const indexMatch = url.match(indexRE)
+    // directory urls need a server to resolve them, and file:// has none
+    const explicitIndex = isRelativeBase(base) && !env.cleanUrls
+
+    let cleanUrl = url.replace(/[?#].*$/, '')
+    const indexMatch = cleanUrl.match(indexRE)
     if (indexMatch) {
-      const [, path, hash] = indexMatch
-      url = path + normalizeHash(hash)
+      cleanUrl = indexMatch[1] + (explicitIndex ? 'index.html' : '')
     } else {
-      let cleanUrl = url.replace(/[?#].*$/, '')
       // transform foo.md -> foo[.html]
       if (cleanUrl.endsWith('.md')) {
         cleanUrl = cleanUrl.replace(/\.md$/, env.cleanUrls ? '' : '.html')
@@ -114,9 +129,12 @@ export const linkPlugin = (
       ) {
         cleanUrl += '.html'
       }
-      const parsed = new URL(url, 'http://a.com')
-      url = cleanUrl + parsed.search + normalizeHash(parsed.hash)
+      if (explicitIndex && cleanUrl.endsWith('/')) {
+        cleanUrl += 'index.html'
+      }
     }
+    const parsed = new URL(url, 'http://a.com')
+    url = cleanUrl + parsed.search + normalizeHash(parsed.hash)
 
     // ensure leading . for relative paths
     if (!url.startsWith('/') && !url.startsWith('./')) {

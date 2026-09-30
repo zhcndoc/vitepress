@@ -42,6 +42,16 @@ describe('node/markdown/markdown', () => {
       expect(await render(':tada:', { emoji: false })).toContain(':tada:')
     })
 
+    test('eagerFrontmatterInterpolation', async () => {
+      const src = '---\ntitle: Hello\n---\n\n{{ $frontmatter.title }}'
+      expect(await render(src)).toContain('<p>Hello</p>')
+
+      const disabled = await render(src, {
+        eagerFrontmatterInterpolation: false
+      })
+      expect(disabled).toContain('<p>{{ $frontmatter.title }}</p>')
+    })
+
     test('tasklist', async () => {
       const src = '- [ ] todo'
       expect(await render(src)).toContain('<input type="checkbox"')
@@ -63,11 +73,11 @@ describe('node/markdown/markdown', () => {
     test('preWrapper', async () => {
       const src = '```js\nconst a = 1\n```'
       const enabled = await render(src)
-      expect(enabled).toContain('<div class="language-js">')
+      expect(enabled).toContain('<div class="language-js" dir="ltr">')
       expect(enabled).toContain('class="copy"')
 
       const disabled = await render(src, { preWrapper: false })
-      expect(disabled).not.toContain('<div class="language-js">')
+      expect(disabled).not.toContain('<div class="language-js" dir="ltr">')
       expect(disabled).not.toContain('class="copy"')
     })
 

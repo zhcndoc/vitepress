@@ -11,7 +11,7 @@ defineProps<{
   <ul class="VPDocOutlineItem" :class="root ? 'root' : 'nested'">
     <li v-for="{ children, link, title } in headers">
       <a class="outline-link" :href="link" :title>
-        {{ title }}
+        <bdi>{{ title }}</bdi>
       </a>
       <template v-if="children?.length">
         <VPDocOutlineItem :headers="children" />
@@ -27,8 +27,7 @@ defineProps<{
 }
 
 .nested {
-  padding-right: 1rem;
-  padding-left: 1rem;
+  padding-inline: 1rem;
 }
 
 .outline-link {
@@ -37,6 +36,8 @@ defineProps<{
   font-size: 0.875rem;
   font-weight: 400;
   color: var(--vp-c-text-2);
+  scroll-margin-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + var(--vp-doc-top-height, 0px) + 2rem);
+  scroll-margin-bottom: 3rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -50,6 +51,6 @@ defineProps<{
 }
 
 .outline-link.nested {
-  padding-left: 0.8125rem;
+  padding-inline-start: 0.8125rem;
 }
 </style>

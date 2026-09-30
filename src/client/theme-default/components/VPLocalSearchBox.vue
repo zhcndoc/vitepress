@@ -6,13 +6,12 @@ import {
   onKeyStroke,
   useEventListener,
   useLocalStorage,
-  useScrollLock,
   useSessionStorage
 } from '@vueuse/core'
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
 import Mark from 'mark.js/src/vanilla.js'
 import MiniSearch, { type SearchResult } from 'minisearch'
-import { dataSymbol, inBrowser, useRouter } from 'vitepress'
+import { dataSymbol, useRouter, withBase } from 'vitepress'
 import {
   computed,
   createApp,
@@ -22,14 +21,17 @@ import {
   onMounted,
   ref,
   shallowRef,
+  useTemplateRef,
   watch,
   watchEffect,
   type Ref
 } from 'vue'
+
 import type { LocalSearchTranslations } from '../../../../types/local-search'
 import { pathToFile } from '../../app/utils'
 import { escapeRegExp } from '../../shared'
 import { useData } from '../composables/data'
+import { useBodyScrollLock } from '../composables/scroll-lock'
 import { LRUCache } from '../support/lru'
 import { createSearchTranslate } from '../support/translation'
 
@@ -37,8 +39,8 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
-const el = shallowRef<HTMLElement>()
-const resultsEl = shallowRef<HTMLElement>()
+const el = useTemplateRef('el')
+const resultsEl = useTemplateRef('resultsEl')
 
 /* Search */
 
@@ -74,25 +76,25 @@ const showSearchSpinner = computed(() => {
 })
 
 const searchIndex = computedAsync(
-  async () =>
-    markRaw(
-      MiniSearch.loadJSON<Result>(
-        (await searchIndexData.value[localeIndex.value]?.())?.default,
-        {
-          fields: ['title', 'titles', 'text'],
-          storeFields: ['title', 'titles'],
-          searchOptions: {
-            fuzzy: 0.2,
-            prefix: true,
-            boost: { title: 4, text: 2, titles: 1 },
-            ...(theme.value.search?.provider === 'local' &&
-              theme.value.search.options?.miniSearch?.searchOptions)
-          },
+  async () => {
+    const json = (await searchIndexData.value[localeIndex.value]?.())?.default
+    if (!json) return null
+    return markRaw(
+      MiniSearch.loadJSON<Result>(json, {
+        fields: ['title', 'titles', 'text'],
+        storeFields: ['title', 'titles'],
+        searchOptions: {
+          fuzzy: 0.2,
+          prefix: true,
+          boost: { title: 4, text: 2, titles: 1 },
           ...(theme.value.search?.provider === 'local' &&
-            theme.value.search.options?.miniSearch?.options)
-        }
-      )
-    ),
+            theme.value.search.options?.miniSearch?.searchOptions)
+        },
+        ...(theme.value.search?.provider === 'local' &&
+          theme.value.search.options?.miniSearch?.options)
+      })
+    )
+  },
   undefined,
   isSearchIndexLoading
 )
@@ -175,7 +177,7 @@ watchDebounced(
       : []
     if (canceled) return
     for (const { id, mod } of mods) {
-      const mapId = id.slice(0, id.indexOf('#'))
+      const mapId = id.replace(/#.*$/, '')
       let map = cache.get(mapId)
       if (map) continue
       map = new Map()
@@ -252,7 +254,7 @@ watchDebounced(
 )
 
 async function fetchExcerpt(id: string) {
-  const file = pathToFile(id.slice(0, id.indexOf('#')))
+  const file = pathToFile(withBase(id.replace(/#.*$/, '')))
   try {
     if (!file) throw new Error(`Cannot find file for id: ${id}`)
     return { id, mod: await import(/*@vite-ignore*/ file) }
@@ -264,7 +266,7 @@ async function fetchExcerpt(id: string) {
 
 /* Search input focus */
 
-const searchInput = ref<HTMLInputElement>()
+const searchInput = useTemplateRef('searchInput')
 const disableReset = computed(() => {
   return filterText.value?.length <= 0
 })
@@ -361,7 +363,7 @@ onKeyStroke('Enter', (e) => {
   }
 
   if (selectedPackage) {
-    router.go(selectedPackage.id)
+    router.go(withBase(selectedPackage.id))
     emit('close')
   }
 })
@@ -409,7 +411,7 @@ useEventListener('popstate', (event) => {
 
 /** Lock body */
 
-const isLocked = useScrollLock(inBrowser ? document.body : null)
+const isLocked = useBodyScrollLock()
 
 onMounted(() => {
   nextTick(() => {
@@ -486,7 +488,7 @@ function onMouseMove(e: MouseEvent) {
           <input
             ref="searchInput"
             v-model="filterText"
-            :aria-activedescendant="selectedIndex > -1 ? ('localsearch-item-' + selectedIndex) : undefined"
+            :aria-activedescendant="selectedIndex > -1 ? 'localsearch-item-' + selectedIndex : undefined"
             aria-autocomplete="both"
             :aria-controls="results?.length ? 'localsearch-list' : undefined"
             aria-labelledby="localsearch-label"
@@ -552,7 +554,7 @@ function onMouseMove(e: MouseEvent) {
             role="option"
           >
             <a
-              :href="p.id"
+              :href="withBase(p.id)"
               class="result"
               :class="{
                 selected: selectedIndex === index
@@ -571,11 +573,11 @@ function onMouseMove(e: MouseEvent) {
                     :key="index"
                     class="title"
                   >
-                    <span class="text" v-html="t" />
+                    <span class="text" dir="auto" v-html="t" />
                     <span class="vpi-chevron-right local-search-icon" />
                   </span>
                   <span class="title main">
-                    <span class="text" v-html="p.title" />
+                    <span class="text" dir="auto" v-html="p.title" />
                   </span>
                 </div>
 
@@ -593,8 +595,7 @@ function onMouseMove(e: MouseEvent) {
             v-if="filterText && !results.length && enableNoResults"
             class="no-results"
           >
-            {{ translate('modal.noResultsText') }} "<strong>{{ filterText }}</strong
-            >"
+            {{ translate('modal.noResultsText') }} "<strong>{{ filterText }}</strong>"
           </li>
         </ul>
 
@@ -916,8 +917,7 @@ function onMouseMove(e: MouseEvent) {
 .excerpt-gradient-bottom {
   position: absolute;
   bottom: -1px;
-  left: 0;
-  width: 100%;
+  inset-inline: 0;
   height: 0.5rem;
   background: linear-gradient(transparent, var(--vp-local-search-result-bg));
   z-index: 1000;
@@ -926,8 +926,7 @@ function onMouseMove(e: MouseEvent) {
 .excerpt-gradient-top {
   position: absolute;
   top: -1px;
-  left: 0;
-  width: 100%;
+  inset-inline: 0;
   height: 0.5rem;
   background: linear-gradient(var(--vp-local-search-result-bg), transparent);
   z-index: 1000;

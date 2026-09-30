@@ -2,9 +2,11 @@
 import { onKeyStroke } from '@vueuse/core'
 import { onContentUpdated } from 'vitepress'
 import type { DefaultTheme } from 'vitepress/theme'
-import { nextTick, ref, watch } from 'vue'
+import { nextTick, ref, useId, useTemplateRef, watch } from 'vue'
+
 import { useData } from '../composables/data'
 import { resolveTitle } from '../composables/outline'
+import { useBodyScrollLock } from '../composables/scroll-lock'
 import VPDocOutlineItem from './VPDocOutlineItem.vue'
 
 const props = defineProps<{
@@ -15,8 +17,12 @@ const props = defineProps<{
 const { theme } = useData()
 const open = ref(false)
 const vh = ref(0)
-const main = ref<HTMLDivElement>()
-const items = ref<HTMLDivElement>()
+const main = useTemplateRef('main')
+const items = useTemplateRef('items')
+const itemsId = useId()
+
+// lock body scroll while the dropdown is open to prevent scroll chaining
+const isLocked = useBodyScrollLock()
 
 function closeOnClickOutside(e: Event) {
   if (!main.value?.contains(e.target as Node)) {
@@ -25,6 +31,7 @@ function closeOnClickOutside(e: Event) {
 }
 
 watch(open, (value) => {
+  isLocked.value = value
   if (value) {
     document.addEventListener('click', closeOnClickOutside)
     return
@@ -70,15 +77,22 @@ function scrollToTop() {
     :style="{ '--vp-vh': vh + 'px' }"
     data-allow-mismatch="style"
   >
-    <button @click="toggle" :class="{ open }" v-if="headers.length > 0">
+    <button
+      v-if="headers.length > 0"
+      type="button"
+      :aria-expanded="open"
+      :aria-controls="itemsId"
+      :class="{ open }"
+      @click="toggle"
+    >
       <span class="menu-text">{{ resolveTitle(theme) }}</span>
-      <span class="vpi-chevron-right icon" />
+      <span class="vpi-chevron-right icon" aria-hidden="true" />
     </button>
-    <button @click="scrollToTop" v-else>
+    <button v-else type="button" @click="scrollToTop">
       {{ theme.returnToTopLabel || 'Return to top' }}
     </button>
     <Transition name="flyout">
-      <div v-if="open" ref="items" class="items" @click="onItemClick">
+      <div v-if="open" ref="items" :id="itemsId" class="items" @click="onItemClick">
         <div class="header">
           <a class="top-link" href="#" @click="scrollToTop">
             {{ theme.returnToTopLabel || 'Return to top' }}
@@ -115,9 +129,9 @@ function scrollToTop() {
 .icon {
   display: inline-block;
   vertical-align: middle;
-  margin-left: 0.125rem;
+  margin-inline-start: 0.125rem;
   font-size: 0.875rem;
-  transform: rotate(0) /*rtl:rotate(180deg)*/;
+  transform: rotate(0);
   transition: transform 0.25s;
 }
 
@@ -132,15 +146,13 @@ function scrollToTop() {
 }
 
 .open > .icon {
-  /*rtl:ignore*/
   transform: rotate(90deg);
 }
 
 .items {
   position: absolute;
   top: 2.5rem;
-  right: 1rem;
-  left: 1rem;
+  inset-inline: 1rem;
   display: grid;
   gap: 1px;
   border: 1px solid var(--vp-c-border);
@@ -148,13 +160,13 @@ function scrollToTop() {
   background-color: var(--vp-c-gutter);
   max-height: calc(var(--vp-vh, 100vh) - 5.375rem);
   overflow: hidden auto;
+  overscroll-behavior: contain;
   box-shadow: var(--vp-shadow-3);
 }
 
 @media (min-width: 60rem) {
   .items {
-    right: auto;
-    left: calc(var(--vp-sidebar-width) + 2rem);
+    inset-inline: calc(var(--vp-sidebar-width) + 2rem) auto;
     width: 20rem;
   }
 }

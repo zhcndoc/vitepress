@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DefaultTheme } from 'vitepress/theme'
 import { computed } from 'vue'
+
 import { useSidebarItemControl } from '../composables/sidebar'
 import VPLink from './VPLink.vue'
 
@@ -14,84 +15,69 @@ const {
   collapsible,
   isLink,
   isActiveLink,
+  isCurrentLink,
   hasActiveLink,
   hasChildren,
   toggle
 } = useSidebarItemControl(computed(() => props.item))
 
-const sectionTag = computed(() => (hasChildren.value ? 'section' : `div`))
-
 const linkTag = computed(() => (isLink.value ? 'a' : 'div'))
 
-const textTag = computed(() => {
-  return !hasChildren.value
-    ? 'p'
-    : props.depth + 2 === 7
-      ? 'p'
-      : `h${props.depth + 2}`
-})
+const textTag = computed(() =>
+  hasChildren.value && props.depth < 5 ? `h${props.depth + 2}` : 'p'
+)
 
-const itemRole = computed(() => (isLink.value ? undefined : 'button'))
+// a section needs a heading
+const sectionTag = computed(() =>
+  props.item.text && textTag.value !== 'p' ? 'section' : 'div'
+)
 
-const classes = computed(() => [
-  [`level-${props.depth}`],
-  { collapsible: collapsible.value },
-  { collapsed: collapsed.value },
-  { 'is-link': isLink.value },
-  { 'is-active': isActiveLink.value },
-  { 'has-active': hasActiveLink.value }
-])
-
-function onItemInteraction(e: MouseEvent | Event) {
-  if ('key' in e && e.key !== 'Enter') {
-    return
-  }
+function onItemClick() {
   !props.item.link && toggle()
-}
-
-function onCaretClick() {
-  props.item.link && toggle()
 }
 </script>
 
 <template>
-  <component :is="sectionTag" class="VPSidebarItem" :class="classes">
-    <div
-      v-if="item.text"
-      class="item"
-      :role="itemRole"
-      v-on="
-        item.items
-          ? { click: onItemInteraction, keydown: onItemInteraction }
-          : {}
-      "
-      :tabindex="item.items && 0"
-    >
+  <component
+    :is="sectionTag"
+    class="VPSidebarItem"
+    :class="[
+      `level-${depth}`,
+      {
+        collapsible,
+        collapsed,
+        'is-link': isLink,
+        'is-active': isActiveLink,
+        'has-active': hasActiveLink
+      }
+    ]"
+  >
+    <div v-if="item.text" class="item" @click="onItemClick">
       <div class="indicator" />
 
       <VPLink
         v-if="item.link"
         :tag="linkTag"
         class="link"
+        :aria-current="isCurrentLink ? 'page' : undefined"
         :href="item.link"
         :rel="item.rel"
         :target="item.target"
       >
-        <component :is="textTag" class="text" v-html="item.text" />
+        <component :is="textTag" class="text"><bdi v-html="item.text" /></component>
       </VPLink>
-      <component v-else :is="textTag" class="text" v-html="item.text" />
+      <component v-else :is="textTag" class="text"><bdi v-html="item.text" /></component>
 
-      <div
+      <button
         v-if="item.collapsed != null && item.items && item.items.length"
+        type="button"
         class="caret"
-        role="button"
         aria-label="toggle section"
-        @click="onCaretClick"
-        @keydown.enter="onCaretClick"
-        tabindex="0"
+        :aria-expanded="!collapsed"
+        @click.stop="toggle"
       >
         <span class="vpi-chevron-right caret-icon" />
-      </div>
+      </button>
     </div>
 
     <ul v-if="item.items && item.items.length" class="items">
@@ -130,7 +116,7 @@ function onCaretClick() {
   position: absolute;
   top: 0.375rem;
   bottom: 0.375rem;
-  left: calc(-1rem - 1px);
+  inset-inline-start: calc(-1rem - 1px);
   width: 2px;
   border-radius: 2px;
   transition: background-color 0.25s;
@@ -208,7 +194,7 @@ function onCaretClick() {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: -0.4375rem;
+  margin-inline-end: -0.4375rem;
   width: 2rem;
   height: 2rem;
   color: var(--vp-c-text-3);
@@ -227,13 +213,12 @@ function onCaretClick() {
 
 .caret-icon {
   font-size: 1.125rem;
-  /*rtl:ignore*/
   transform: rotate(90deg);
   transition: transform 0.25s;
 }
 
 .VPSidebarItem.collapsed .caret-icon {
-  transform: rotate(0)/*rtl:rotate(180deg)*/;
+  transform: rotate(0);
 }
 
 .VPSidebarItem.level-1 .items,
@@ -241,8 +226,8 @@ function onCaretClick() {
 .VPSidebarItem.level-3 .items,
 .VPSidebarItem.level-4 .items,
 .VPSidebarItem.level-5 .items {
-  border-left: 1px solid var(--vp-c-divider);
-  padding-left: 1rem;
+  border-inline-start: 1px solid var(--vp-c-divider);
+  padding-inline-start: 1rem;
 }
 
 .VPSidebarItem.collapsed .items {

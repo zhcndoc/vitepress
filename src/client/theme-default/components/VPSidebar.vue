@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { useScrollLock } from '@vueuse/core'
-import { inBrowser } from 'vitepress'
-import { ref, watch } from 'vue'
+import { ref, useTemplateRef, watch } from 'vue'
+
 import { useLayout } from '../composables/layout'
+import { useBodyScrollLock } from '../composables/scroll-lock'
 import VPSidebarGroup from './VPSidebarGroup.vue'
 
 const { sidebarGroups, hasSidebar } = useLayout()
@@ -12,11 +12,11 @@ const props = defineProps<{
 }>()
 
 // a11y: focus Nav element when menu has opened
-const navEl = ref<HTMLElement | null>(null)
-const isLocked = useScrollLock(inBrowser ? document.body : null)
+const navEl = useTemplateRef('navEl')
+const isLocked = useBodyScrollLock()
 
 watch(
-  [props, navEl],
+  [() => props.open, navEl],
   () => {
     if (props.open) {
       isLocked.value = true
@@ -69,7 +69,7 @@ watch(
   position: fixed;
   top: var(--vp-layout-top-height, 0px);
   bottom: 0;
-  left: 0;
+  inset-inline-start: 0;
   z-index: var(--vp-z-index-sidebar);
   padding: 2rem 2rem 6rem;
   width: calc(100vw - 4rem);
@@ -79,7 +79,7 @@ watch(
   box-shadow: var(--vp-c-shadow-3);
   overflow-x: hidden;
   overflow-y: auto;
-  transform: translateX(-100%);
+  transform: translateX(calc(-100% * var(--vp-direction-multiplier)));
   transition: opacity 0.5s, transform 0.25s ease;
   overscroll-behavior: contain;
 }
@@ -88,8 +88,7 @@ watch(
   opacity: 1;
   visibility: visible;
   transform: translateX(0);
-  transition: opacity 0.25s,
-    transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: opacity 0.25s, transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .dark .VPSidebar {
@@ -111,7 +110,7 @@ watch(
 
 @media (min-width: 90rem) {
   .VPSidebar {
-    padding-left: max(2rem, calc((100% - (var(--vp-layout-max-width) - 4rem)) / 2));
+    padding-inline-start: max(2rem, calc((100% - (var(--vp-layout-max-width) - 4rem)) / 2));
     width: calc((100% - (var(--vp-layout-max-width) - 4rem)) / 2 + var(--vp-sidebar-width) - 2rem);
   }
 }
@@ -120,11 +119,10 @@ watch(
   .curtain {
     position: sticky;
     top: calc(var(--vp-nav-height) * -1);
-    left: 0;
+    inset-inline-start: 0;
     z-index: 1;
     margin-top: calc(var(--vp-nav-height) * -1);
-    margin-right: -2rem;
-    margin-left: -2rem;
+    margin-inline: -2rem;
     height: var(--vp-nav-height);
     background-color: var(--vp-sidebar-bg-color);
   }

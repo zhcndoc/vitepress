@@ -1,15 +1,14 @@
 <script setup lang="ts">
-interface Props {
+withDefaults(defineProps<{
   text?: string
-  type?: 'info' | 'tip' | 'warning' | 'danger'
-}
-withDefaults(defineProps<Props>(), {
+  type?: 'info' | 'note' | 'tip' | 'important' | 'caution' | 'warning' | 'danger'
+}>(), {
   type: 'tip'
 })
 </script>
 
 <template>
-  <span class="VPBadge" :class="type">
+  <span class="VPBadge" :class="type" dir="auto">
     <slot>{{ text }}</slot>
   </span>
 </template>
@@ -17,7 +16,7 @@ withDefaults(defineProps<Props>(), {
 <style>
 .VPBadge {
   display: inline-block;
-  margin-left: 0.125rem;
+  margin-inline-start: 0.125rem;
   border: 1px solid transparent;
   border-radius: 0.75rem;
   padding: 0 0.625rem;
@@ -41,7 +40,8 @@ withDefaults(defineProps<Props>(), {
 
 .vp-doc h1 > .VPBadge,
 .vp-doc h2 > .VPBadge {
-  margin: 0 0 0 0.125rem;
+  margin: 0;
+  margin-inline-start: 0.125rem;
   vertical-align: middle;
 }
 
@@ -66,10 +66,28 @@ withDefaults(defineProps<Props>(), {
   background-color: var(--vp-badge-info-bg);
 }
 
+.VPBadge.note {
+  border-color: var(--vp-badge-note-border);
+  color: var(--vp-badge-note-text);
+  background-color: var(--vp-badge-note-bg);
+}
+
 .VPBadge.tip {
   border-color: var(--vp-badge-tip-border);
   color: var(--vp-badge-tip-text);
   background-color: var(--vp-badge-tip-bg);
+}
+
+.VPBadge.important {
+  border-color: var(--vp-badge-important-border);
+  color: var(--vp-badge-important-text);
+  background-color: var(--vp-badge-important-bg);
+}
+
+.VPBadge.caution {
+  border-color: var(--vp-badge-caution-border);
+  color: var(--vp-badge-caution-text);
+  background-color: var(--vp-badge-caution-bg);
 }
 
 .VPBadge.warning {

@@ -1,16 +1,15 @@
-import { spawn } from 'cross-spawn'
 import type { SpawnOptions } from 'node:child_process'
 import { once } from 'node:events'
 import fs from 'node:fs'
-import { createRequire } from 'node:module'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+
 import * as prompts from '@clack/prompts'
+import { spawn } from 'cross-spawn'
 import semver from 'semver'
 
-const { version: currentVersion } = createRequire(import.meta.url)(
-  '../package.json'
-)
+import pkg from '../package.json' with { type: 'json' }
+
 const { inc: _inc, valid } = semver
 
 const versionIncrements = ['patch', 'minor', 'major'] as const
@@ -18,7 +17,7 @@ const versionIncrements = ['patch', 'minor', 'major'] as const
 const tags = ['latest', 'next'] as const
 
 const dir = fileURLToPath(new URL('.', import.meta.url))
-const inc = (i: semver.ReleaseType) => _inc(currentVersion, i)
+const inc = (i: semver.ReleaseType) => _inc(pkg.version, i)
 const run = async (bin: string, args: string[], opts: SpawnOptions = {}) => {
   const child = spawn(bin, args, { stdio: 'inherit', ...opts })
   const [code, signal] = (await once(child, 'close')) as [
@@ -51,7 +50,7 @@ async function main() {
   if (release === 3) {
     const customVersion = await prompts.text({
       message: 'Input custom version',
-      initialValue: currentVersion
+      initialValue: pkg.version
     })
     if (prompts.isCancel(customVersion)) return cancel()
     targetVersion = customVersion
@@ -101,7 +100,12 @@ async function main() {
 
   // Commit changes to the Git and create a tag.
   prompts.log.step('Committing changes...')
-  await run('git', ['add', 'CHANGELOG.md', 'package.json'])
+  await run('git', [
+    'add',
+    'CHANGELOG.md',
+    'package.json',
+    'THIRD-PARTY-NOTICES.md'
+  ])
   await run('git', ['commit', '-m', `release: v${targetVersion}`])
   await run('git', ['tag', `v${targetVersion}`])
 

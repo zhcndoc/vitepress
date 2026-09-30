@@ -1,9 +1,10 @@
 import { withBase } from 'vitepress'
-import { isExternal, treatAsHtml } from '../../shared'
+
+import { isExternal, isRelativeBase, treatAsHtml } from '../../shared'
 import { useData } from '../composables/data'
 
 export function throttleAndDebounce(fn: () => void, delay: number): () => void {
-  let timeoutId: NodeJS.Timeout
+  let timeoutId: number
   let called = false
 
   return () => {
@@ -11,8 +12,8 @@ export function throttleAndDebounce(fn: () => void, delay: number): () => void {
 
     if (!called) {
       fn()
-      ;(called = true) && setTimeout(() => (called = false), delay)
-    } else timeoutId = setTimeout(fn, delay)
+      ;(called = true) && window.setTimeout(() => (called = false), delay)
+    } else timeoutId = window.setTimeout(fn, delay)
   }
 }
 
@@ -45,7 +46,7 @@ export function normalizeLink(url: string): string {
 
   const { site } = useData()
 
-  const normalizedPath =
+  let normalizedPath =
     pathname.endsWith('/') || pathname.endsWith('.html')
       ? url
       : url.replace(
@@ -55,6 +56,14 @@ export function normalizeLink(url: string): string {
             site.value.cleanUrls ? '' : '.html'
           )}${search}${hash}`
         )
+
+  if (isRelativeBase(site.value.base) && !site.value.cleanUrls) {
+    const pathPart = normalizedPath.replace(/[?#].*$/, '')
+    if (pathPart.endsWith('/')) {
+      normalizedPath =
+        pathPart + 'index.html' + normalizedPath.slice(pathPart.length)
+    }
+  }
 
   return withBase(normalizedPath)
 }

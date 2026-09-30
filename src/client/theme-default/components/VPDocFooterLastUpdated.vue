@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { useNavigatorLanguage } from '@vueuse/core'
-import { computed, onMounted, shallowRef, useTemplateRef, watchEffect } from 'vue'
+import {
+  computed,
+  onMounted,
+  shallowRef,
+  useTemplateRef,
+  watchEffect
+} from 'vue'
+
 import { useData } from '../composables/data'
 
 const { theme, page, lang: pageLang } = useData()
@@ -39,8 +46,8 @@ onMounted(() => {
 
 <template>
   <p class="VPLastUpdated">
-    {{ theme.lastUpdated?.text || 'Last updated' }}:
-    <time ref="timeRef" :datetime="isoDatetime">{{ datetime }}</time>
+    <bdi>{{ theme.lastUpdated?.text || 'Last updated' }}:</bdi>
+    <time ref="timeRef" dir="auto" :datetime="isoDatetime">{{ datetime }}</time>
   </p>
 </template>
 
